@@ -1,14 +1,17 @@
 package com.leagueofoop.main;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import fileio.FileSystem;
 
-final class GameInputLoader {
+final class GameIOLoader {
     private final String mInputPath;
     private final String mOutputPath;
 
-    GameInputLoader(final String inputPath, final String outputPath) {
+    GameIOLoader(final String inputPath, final String outputPath) {
         mInputPath = inputPath;
         mOutputPath = outputPath;
     }
@@ -51,5 +54,12 @@ final class GameInputLoader {
         }
 
         return new GameInput(xDim, yDim, groundData, playerNumber, playerData, roundNumber, roundData);
+    }
+
+    void write(String string) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(mOutputPath, true));
+        writer.write(string);
+        writer.newLine();
+        writer.close();
     }
 }

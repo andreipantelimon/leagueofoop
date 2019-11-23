@@ -20,11 +20,35 @@ public abstract class Player {
         return null;
     }
 
+    public void moveUp() {
+        if (!isDead) {
+            this.xPos--;
+        }
+    }
+
+    public void moveDown() {
+        if (!isDead) {
+            this.xPos++;
+        }
+    }
+
+    public void moveLeft() {
+        if (!isDead) {
+            this.yPos--;
+        }
+    }
+
+    public void moveRight() {
+        if (!isDead) {
+            this.yPos++;
+        }
+    }
+
     public String toString() {
         if (isDead) {
             return this.getType() + " dead";
         } else {
-            return this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos + " ";
+            return this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos;
         }
     }
 }
