@@ -8,6 +8,7 @@ public abstract class Player {
     int xp = 0;
     int level = 0;
     boolean isDead = false;
+    boolean inFight = false;
     PlayerType type = null;
 
     Player(int id, int xPos, int yPos) {
@@ -50,5 +51,17 @@ public abstract class Player {
         } else {
             return this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos;
         }
+    }
+
+    public int getxPos() {
+        return xPos;
+    }
+
+    public int getyPos() {
+        return yPos;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }
