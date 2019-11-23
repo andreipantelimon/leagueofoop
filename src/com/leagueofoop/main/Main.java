@@ -1,7 +1,9 @@
 package com.leagueofoop.main;
 
-public class Main {
+public final class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        GameInputLoader gameInputLoader = new GameInputLoader(args[0], args[1]);
+        GameInput gameInput = gameInputLoader.load();
+
     }
 }
