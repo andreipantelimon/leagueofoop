@@ -1,0 +1,30 @@
+package com.leagueofoop.player;
+
+public abstract class Player {
+    int id = -1;
+    int xPos = -1;
+    int yPos = -1;
+    int hp = -1;
+    int xp = 0;
+    int level = 0;
+    boolean isDead = false;
+    PlayerType type = null;
+
+    Player(int id, int xPos, int yPos) {
+        this.id = id;
+        this.xPos = xPos;
+        this.yPos = yPos;
+    }
+
+    String getType() {
+        return null;
+    }
+
+    public String toString() {
+        if (isDead) {
+            return this.getType() + " dead";
+        } else {
+            return this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos + " ";
+        }
+    }
+}
