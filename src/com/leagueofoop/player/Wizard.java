@@ -1,5 +1,7 @@
 package com.leagueofoop.player;
 
+import com.leagueofoop.board.Ground;
+
 public class Wizard extends Player {
     Wizard(int id, int xPos, int yPos) {
         super(id, xPos, yPos);
@@ -9,5 +11,13 @@ public class Wizard extends Player {
 
     public String getType() {
         return "W";
+    }
+
+    public void accept(Player player, Ground ground) {
+        player.fight(this, ground);
+    }
+
+    void fight(Player player, Ground ground) {
+        System.out.println("Fight between " + this.getType() + " " + player.getType());
     }
 }

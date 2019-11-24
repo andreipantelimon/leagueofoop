@@ -1,29 +1,42 @@
 package com.leagueofoop.board;
 
+import com.leagueofoop.player.Player;
+
 public abstract class Ground {
-    boolean isOccupied = false;
-    int occupantId = -1;
+    Player player1 = null;
+    Player player2 = null;
+    int numPlayers = 0;
     GroundType type;
 
-    public void setOccupied(int id) {
-        this.occupantId = id;
-        this.isOccupied = true;
-    }
-
-    public void occupantLeft() {
-        this.occupantId = -1;
-        this.isOccupied = false;
-    }
-
     public String toString() {
-        return "Type: " + this.type + " isOccupied: " + this.isOccupied + " id: " + this.occupantId;
+        return "Type: " + this.type + " Player1: " + this.player1 + " Player2: " + this.player2;
     }
 
-    public boolean isOccupied() {
-        return isOccupied;
+
+    public void setPlayer1(Player player) {
+        this.player1 = player;
+        numPlayers++;
     }
 
-    public int getOccupantId() {
-        return occupantId;
+    public void setPlayer2(Player player) {
+        this.player2 = player;
+        numPlayers++;
+    }
+
+
+    public GroundType getType() {
+        return this.type;
+    }
+
+    public int getNumPlayers() {
+        return this.numPlayers;
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
     }
 }

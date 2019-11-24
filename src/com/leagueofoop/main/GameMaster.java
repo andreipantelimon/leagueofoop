@@ -25,11 +25,16 @@ public class GameMaster {
             String moveData = gameInput.getRoundData().get(i);
             //TODO: Take DoT damage
             movePlayers(moveData);
-            //TODO: if 2 players didnt die after a fight, fight again next round if they dont move
-        }
-        for (int i = 0; i < gameInput.getXDim(); i++) {
-            for (int j = 0; j < gameInput.getYDim(); j++) {
-                System.out.println(board[i][j]);
+
+            for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
+                for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
+                    if (board[xDim][yDim].getNumPlayers() == 2) {
+                        Player p1 = board[xDim][yDim].getPlayer1();
+                        Player p2 = board[xDim][yDim].getPlayer2();
+                        p1.accept(p2, board[xDim][yDim]);
+                        p2.accept(p1, board[xDim][yDim]);
+                    }
+                }
             }
         }
     }
@@ -56,19 +61,11 @@ public class GameMaster {
         }
 
         for (Player player : playersList) {
-            int tempX = player.getxPos();
-            int tempY = player.getyPos();
-            int tempId = player.getId();
-
-            //TODO: nu prea e bine aici asta, trebuie pusa dupa runda
-
-            if (board[tempX][tempY].isOccupied()) {
-                int p1Id = board[tempX][tempY].getOccupantId();
-                int p2Id = player.getId();
-
-                //TODO: fight p1 and p2, winner is occupant
+            Ground tempGround = board[player.getxPos()][player.getyPos()];
+            if (tempGround.getNumPlayers() == 0) {
+                board[player.getxPos()][player.getyPos()].setPlayer1(player);
             } else {
-                board[tempX][tempY].setOccupied(tempId);
+                board[player.getxPos()][player.getyPos()].setPlayer2(player);
             }
         }
     }
@@ -77,47 +74,24 @@ public class GameMaster {
         for (int id = 0; id < moveData.length(); id++) {
             char move = moveData.charAt(id);
             Player tempPlayer = playersList.get(id);
-            switch (move) {
-                case 'U':
-                    board[tempPlayer.getxPos()][tempPlayer.getyPos()].occupantLeft();
-                    if (board[tempPlayer.getxPos() - 1][tempPlayer.getyPos()].isOccupied()) {
+            if (!tempPlayer.isStunned()) {
+                switch (move) {
+                    case 'U':
                         tempPlayer.moveUp();
-                        //TODO: fight
-                    } else {
-                        board[tempPlayer.getxPos() - 1][tempPlayer.getyPos()].setOccupied(tempPlayer.getId());
-                        tempPlayer.moveUp();
-                    }
-                    break;
-                case 'D':
-                    board[tempPlayer.getxPos()][tempPlayer.getyPos()].occupantLeft();
-                    if (board[tempPlayer.getxPos() + 1][tempPlayer.getyPos()].isOccupied()) {
+                        //TODO: reset board players
+                        break;
+                    case 'D':
                         tempPlayer.moveDown();
-                        //TODO: fight
-                    } else {
-                        board[tempPlayer.getxPos() + 1][tempPlayer.getyPos()].setOccupied(tempPlayer.getId());
-                        tempPlayer.moveDown();
-                    }
-                    break;
-                case 'L':
-                    board[tempPlayer.getxPos()][tempPlayer.getyPos()].occupantLeft();
-                    if (board[tempPlayer.getxPos()][tempPlayer.getyPos() - 1].isOccupied()) {
+                        break;
+                    case 'L':
                         tempPlayer.moveLeft();
-                        //TODO: fight
-                    } else {
-                        board[tempPlayer.getxPos()][tempPlayer.getyPos() - 1].setOccupied(tempPlayer.getId());
-                        tempPlayer.moveLeft();
-                    }
-                    break;
-                case 'R':
-                    board[tempPlayer.getxPos()][tempPlayer.getyPos()].occupantLeft();
-                    if (board[tempPlayer.getxPos()][tempPlayer.getyPos() + 1].isOccupied()) {
+                        break;
+                    case 'R':
                         tempPlayer.moveRight();
-                        //TODO: fight
-                    } else {
-                        board[tempPlayer.getxPos()][tempPlayer.getyPos() + 1].setOccupied(tempPlayer.getId());
-                        tempPlayer.moveRight();
-                    }
-                    break;
+                        break;
+                }
+            } else {
+                tempPlayer.removeStun();
             }
         }
     }
