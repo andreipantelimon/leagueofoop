@@ -9,6 +9,7 @@ public abstract class Player {
     int hp = -1;
     int xp = 0;
     int level = 0;
+    int damageToWizard = 0;
     boolean isDead = false;
     boolean isStunned = false;
     PlayerType type = null;

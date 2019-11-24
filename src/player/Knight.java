@@ -29,6 +29,14 @@ public class Knight extends Player {
         if (((20 + this.level) * player.getHp()) > 40) {
             executeHpLimit = Math.round(40 * player.getHp() / 100);
         }
+
+        int groundModifier = 0;
+        if (ground.getType().equals(GroundType.Land)) {
+            groundModifier = 15;
+        }
+        //TODO: de verificat daca e bine asa
+        this.damageToWizard += executeDmg + Math.round(groundModifier * executeDmg / 100);
+
         int executeModifier = 0;
         switch (player.getType()) {
             case "K": executeModifier = 0;
@@ -40,11 +48,6 @@ public class Knight extends Player {
             case "W": executeModifier = -20;
         }
         executeDmg += Math.round(executeModifier * executeDmg / 100);
-
-        int groundModifier = 0;
-        if (ground.getType().equals(GroundType.Land)) {
-            groundModifier = 15;
-        }
         executeDmg += Math.round(groundModifier * executeDmg / 100);
 
         if (player.getHp() <= executeHpLimit) {
@@ -66,7 +69,6 @@ public class Knight extends Player {
             case "W": slamModifier = 5;
         }
         slamDmg += Math.round(slamModifier * slamDmg / 100);
-        slamDmg += Math.round(groundModifier * slamDmg / 100);
 
         player.setHp(player.getHp() - slamDmg);
         if (player.getHp() <= 0) {
