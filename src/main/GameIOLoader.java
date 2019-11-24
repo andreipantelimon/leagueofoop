@@ -1,4 +1,4 @@
-package com.leagueofoop.main;
+package main;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

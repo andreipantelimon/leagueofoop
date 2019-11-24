@@ -1,4 +1,4 @@
-package com.leagueofoop.board;
+package board;
 
 public class Land extends Ground {
     public Land() {

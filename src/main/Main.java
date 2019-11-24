@@ -1,7 +1,6 @@
-package com.leagueofoop.main;
+package main;
 
-import com.leagueofoop.player.Player;
-import com.leagueofoop.player.PlayerFactory;
+import player.*;
 
 import java.io.IOException;
 

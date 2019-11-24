@@ -1,6 +1,6 @@
-package com.leagueofoop.board;
+package board;
 
-import com.leagueofoop.player.Player;
+import player.Player;
 
 public abstract class Ground {
     Player player1 = null;

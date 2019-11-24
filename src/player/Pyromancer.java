@@ -1,7 +1,7 @@
-package com.leagueofoop.player;
+package player;
 
-import com.leagueofoop.board.Ground;
-import com.leagueofoop.board.GroundType;
+import board.Ground;
+import board.GroundType;
 
 import static java.lang.Integer.max;
 

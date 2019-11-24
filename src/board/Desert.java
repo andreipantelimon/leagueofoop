@@ -1,4 +1,4 @@
-package com.leagueofoop.board;
+package board;
 
 public class Desert extends Ground {
     public Desert() {

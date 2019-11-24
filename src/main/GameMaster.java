@@ -1,7 +1,7 @@
-package com.leagueofoop.main;
+package main;
 
-import com.leagueofoop.board.*;
-import com.leagueofoop.player.Player;
+import board.*;
+import player.*;
 
 import java.util.ArrayList;
 

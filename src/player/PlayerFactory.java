@@ -1,4 +1,4 @@
-package com.leagueofoop.player;
+package player;
 
 public class PlayerFactory {
 

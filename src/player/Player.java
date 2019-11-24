@@ -1,6 +1,6 @@
-package com.leagueofoop.player;
+package player;
 
-import com.leagueofoop.board.Ground;
+import board.Ground;
 
 public abstract class Player {
     int id = -1;

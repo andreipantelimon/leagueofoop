@@ -1,4 +1,4 @@
-package com.leagueofoop.board;
+package board;
 
 public class Volcanic extends Ground {
     public Volcanic() {

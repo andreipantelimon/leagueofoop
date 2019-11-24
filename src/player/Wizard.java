@@ -1,6 +1,6 @@
-package com.leagueofoop.player;
+package player;
 
-import com.leagueofoop.board.Ground;
+import board.Ground;
 
 public class Wizard extends Player {
     Wizard(int id, int xPos, int yPos) {
