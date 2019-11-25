@@ -7,7 +7,7 @@ public class GameInput {
     private int yDim;
     private ArrayList<String> groundData;
     private int playerNumber;
-    private ArrayList<String> playerData;
+    private ArrayList<Triplet<String, Integer, Integer>> playerData;
     private int roundNumber;
     private ArrayList<String> roundData;
 
@@ -22,7 +22,7 @@ public class GameInput {
     }
 
     GameInput(final int xDim, final int yDim, final ArrayList<String> groundData, final int playerNumber,
-              final ArrayList<String> playerData, final int roundNumber, final ArrayList<String> roundData) {
+              final ArrayList<Triplet<String, Integer, Integer>> playerData, final int roundNumber, final ArrayList<String> roundData) {
         this.xDim = xDim;
         this.yDim = yDim;
         this.groundData = groundData;
@@ -48,7 +48,7 @@ public class GameInput {
         return playerNumber;
     }
 
-    public ArrayList<String> getPlayerData() {
+    public ArrayList<Triplet<String, Integer, Integer>> getPlayerData() {
         return playerData;
     }
 

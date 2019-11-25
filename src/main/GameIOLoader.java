@@ -18,7 +18,7 @@ final class GameIOLoader {
 
     GameInput load() {
         ArrayList<String> groundData = new ArrayList<>();
-        ArrayList<String> playerData = new ArrayList<>();
+        ArrayList<Triplet<String, Integer, Integer>> playerData = new ArrayList<>();
         ArrayList<String> roundData = new ArrayList<>();
         int xDim = -1;
         int yDim = -1;
@@ -38,7 +38,7 @@ final class GameIOLoader {
             playerNumber = fs.nextInt();
 
             for (int i = 0; i < playerNumber; i++) {
-                playerData.add(fs.nextWord() + fs.nextInt() + fs.nextInt());
+                playerData.add(new Triplet<>(fs.nextWord(), fs.nextInt(), fs.nextInt()));
             }
 
             roundNumber = fs.nextInt();

@@ -23,57 +23,60 @@ public class Wizard extends Player {
     }
 
     void fight(Player player, Ground ground) {
-        System.out.println("Fight between " + this.getType() + " " + player.getType());
         int kill = 0;
+        boolean playerDied = false;
 
-        int groundModifier = 0;
+        float groundModifier = 0;
         if (ground.getType().equals(GroundType.Desert)) {
-            groundModifier = 10;
+            groundModifier = 0.1f;
         }
 
-        int drainPercent = 20 + 5 * this.level;
-        float baseHp =min(0.3f * player.getMaxHp(), player.getHp());
+        float drainPercent = 0.2f + 0.05f * this.level;
+        float baseHp = min(0.3f * player.getMaxHp(), player.getHp());
 
-        int drainModifier = 0;
+        float drainPercentAfterGround = drainPercent + (groundModifier * drainPercent);
+
+        float drainModifier = 0;
         switch (player.getType()) {
-            case "K": drainModifier = 20;
+            case "K": drainModifier = 0.2f;
                 break;
-            case "P": drainModifier = -10;
+            case "P": drainModifier = -0.1f;
                 break;
-            case "R": drainModifier = -20;
+            case "R": drainModifier = -0.2f;
                 break;
-            case "W": drainModifier = 5;
+            case "W": drainModifier = 0.05f;
         }
-        drainPercent += Math.round(drainModifier * drainPercent / 100);
-        drainPercent += Math.round(groundModifier * drainPercent / 100);
-        int drainDmg = Math.round(drainPercent * baseHp / 100);
+        float drainPercentAfterRace = drainPercentAfterGround + (drainModifier * drainPercentAfterGround);
+
+        int drainDmg = Math.round(drainPercentAfterRace * baseHp);
 
         player.setHp(player.getHp() - drainDmg);
         if (player.getHp() <= 0) {
             player.died();
             kill = 1;
+            playerDied = true;
         }
 
         if (!player.getType().equals("W")) {
-            int deflectPercent = 35 + 2 * this.level;
-            if (deflectPercent > 70) {
-                deflectPercent = 70;
-            }
-            int deflectModifier = 0;
+            float deflectPercent = 0.35f + 0.2f * this.level;
+            deflectPercent = Math.min(deflectPercent, 0.7f);
+
+            float deflectPercentAfterGround = deflectPercent + (groundModifier * deflectPercent);
+
+            float deflectModifier = 0;
             switch (player.getType()) {
-                case "K": deflectModifier = 40;
+                case "K": deflectModifier = 0.4f;
                     break;
-                case "P": deflectModifier = 30;
+                case "P": deflectModifier = 0.3f;
                     break;
-                case "R": deflectModifier = 20;
+                case "R": deflectModifier = 0.2f;
                     break;
             }
-            int deflectDmg = Math.round(deflectPercent * player.getDamageToWizard() / 100);
-            deflectDmg += Math.round(deflectModifier * deflectDmg / 100);
-            deflectDmg += Math.round(groundModifier * deflectDmg / 100);
+            float deflectPercentAfterRace = deflectPercentAfterGround + (deflectModifier * deflectPercentAfterGround);
+            int deflectDmg = Math.round(deflectPercentAfterRace * player.getDamageToWizard());
 
             player.setHp(player.getHp() - deflectDmg);
-            if (player.getHp() <= 0) {
+            if (player.getHp() <= 0 && !playerDied) {
                 player.died();
                 kill = 1;
             }
@@ -82,14 +85,13 @@ public class Wizard extends Player {
         player.resetDamageToWizard();
         if (kill == 1) {
             this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
-            this.levelUp();
         }
     }
 
-    void levelUp() {
+    public void levelUp() {
         int oldLevel = this.level;
         super.levelUp();
-        if (oldLevel > this.level) {
+        if (this.level > oldLevel) {
             this.hp = 400 + 30 * this.level;
         }
     }

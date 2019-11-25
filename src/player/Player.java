@@ -10,6 +10,8 @@ public abstract class Player {
     int maxHp = 0;
     int xp = 0;
     int level = 0;
+    int damageOverTime = 0;
+    int damageOverTimeRounds = 0;
     int damageToWizard = 0;
     int stunnedRounds = 0;
     boolean isDead = false;
@@ -30,10 +32,25 @@ public abstract class Player {
         System.out.println("Abstract fight");
     }
 
-    void levelUp() {
+    public void levelUp() {
         while (this.xp >= (250 + this.level * 50)) {
             this.level++;
         }
+    }
+
+    public void takeDoT() {
+        if (damageOverTimeRounds != 0) {
+            this.hp -= damageOverTime;
+            damageOverTimeRounds--;
+            //System.out.println(this.id + " " + this.getType() + " took: " + this.damageOverTime);
+        } else {
+            damageOverTime = 0;
+        }
+    }
+
+    public void setDoT(int rounds, int damage) {
+        this.damageOverTimeRounds = rounds;
+        this.damageOverTime = damage;
     }
 
     public String getType() {
@@ -64,11 +81,23 @@ public abstract class Player {
         }
     }
 
+    public int getId() {
+        return this.id;
+    }
+
     public String toString() {
         if (isDead) {
             return this.getType() + " dead";
         } else {
             return this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos;
+        }
+    }
+
+    public String print() {
+        if (isDead) {
+            return this.id + " " + this.getType() + " dead";
+        } else {
+            return this.id + " " + this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos;
         }
     }
 
@@ -78,10 +107,6 @@ public abstract class Player {
 
     public int getyPos() {
         return yPos;
-    }
-
-    public int getId() {
-        return this.id;
     }
 
     public int getHp() {

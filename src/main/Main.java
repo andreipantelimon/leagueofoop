@@ -10,9 +10,9 @@ public final class Main {
         GameInput gameInput = gameIOLoader.load();
 
         for (int i = 0; i < gameInput.getPlayerNumber(); i++) {
-            char tempType = gameInput.getPlayerData().get(i).charAt(0);
-            int tempXPos = Character.getNumericValue(gameInput.getPlayerData().get(i).charAt(1));
-            int tempYPos = Character.getNumericValue(gameInput.getPlayerData().get(i).charAt(2));
+            char tempType = gameInput.getPlayerData().get(i).getFirst().charAt(0);
+            int tempXPos = gameInput.getPlayerData().get(i).getSecond();
+            int tempYPos = gameInput.getPlayerData().get(i).getThird();
 
             GameMaster.getInstance().addPlayer(PlayerFactory.createPlayer(i, tempType, tempXPos, tempYPos));
         }
@@ -20,7 +20,6 @@ public final class Main {
         GameMaster.getInstance().playTheGame(gameInput);
 
         for (Player player : GameMaster.getInstance().getPlayersList()) {
-            System.out.println(player);
             gameIOLoader.write(player.toString());
         }
     }

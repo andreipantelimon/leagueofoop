@@ -22,61 +22,64 @@ public class Knight extends Player {
     }
 
     void fight(Player player, Ground ground) {
-        System.out.println("Fight between " + this.getType() + " " + player.getType());
-
         int kill = 0;
-        int executeDmg = 200 + 30 * this.level;
+        boolean playerDied = false;
+        float executeDmg = 200 + 30 * this.level;
         int executeHpLimit = Math.round((20 + this.level) * player.getHp() / 100);
         if (((20 + this.level) * player.getHp()) > 40) {
             executeHpLimit = Math.round(40 * player.getHp() / 100);
         }
 
-        int groundModifier = 0;
+        float groundModifier = 0;
         if (ground.getType().equals(GroundType.Land)) {
-            groundModifier = 15;
+            groundModifier = 0.15f;
         }
 
-        this.damageToWizard += executeDmg + Math.round(groundModifier * executeDmg / 100);
-
-        int executeModifier = 0;
+        float executeModifier = 0;
         switch (player.getType()) {
             case "K": executeModifier = 0;
             break;
-            case "P": executeModifier = 10;
+            case "P": executeModifier = 0.1f;
             break;
-            case "R": executeModifier = 15;
+            case "R": executeModifier = 0.15f;
             break;
-            case "W": executeModifier = -20;
+            case "W": executeModifier = -0.2f;
         }
-        executeDmg += Math.round(executeModifier * executeDmg / 100);
-        executeDmg += Math.round(groundModifier * executeDmg / 100);
+        float executeDmgAfterGround = executeDmg + (groundModifier * executeDmg);
+        this.damageToWizard += Math.round(executeDmgAfterGround);
+        int executeDmgAfterRace = Math.round(executeDmgAfterGround + executeModifier * executeDmgAfterGround);
 
         if (player.getHp() <= executeHpLimit) {
+            int executeDmgAll = player.getHp();
+            player.setHp(player.getHp() - executeDmgAll);
             player.died();
             kill = 1;
+            playerDied = true;
         } else {
-            player.setHp(player.getHp() - executeDmg);
+            player.setHp(player.getHp() - executeDmgAfterRace);
         }
 
-        int slamDmg = 100 + 40 * this.level;
-        int slamModifier = 0;
+        float slamDmg = 100 + 40 * this.level;
+        float slamModifier = 0;
 
-        this.damageToWizard += slamDmg + Math.round(slamDmg * groundModifier / 100);
+        float slamDmgAfterGround = slamDmg + (groundModifier * slamDmg);
+
+        this.damageToWizard += Math.round(slamDmgAfterGround);
 
         switch (player.getType()) {
-            case "K": slamModifier = 20;
+            case "K": slamModifier = 0.2f;
                 break;
-            case "P": slamModifier = -10;
+            case "P": slamModifier = -0.1f;
                 break;
-            case "R": slamModifier = -20;
+            case "R": slamModifier = -0.2f;
                 break;
-            case "W": slamModifier = 5;
+            case "W": slamModifier = 0.05f;
         }
-        slamDmg += Math.round(slamModifier * slamDmg / 100);
-        slamDmg += Math.round(groundModifier * slamDmg / 100);
+        int slamDmgAfterRace = Math.round(slamDmgAfterGround + slamModifier * slamDmgAfterGround);
 
-        player.setHp(player.getHp() - slamDmg);
-        if (player.getHp() <= 0) {
+        player.setHp(player.getHp() - slamDmgAfterRace);
+        player.setDoT(0, 0);
+        if (player.getHp() <= 0 && !playerDied) {
             player.died();
             kill = 1;
         }
@@ -85,14 +88,13 @@ public class Knight extends Player {
 
         if (kill == 1) {
             this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
-            this.levelUp();
         }
     }
 
-    void levelUp() {
+    public void levelUp() {
         int oldLevel = this.level;
         super.levelUp();
-        if (oldLevel > this.level) {
+        if (this.level > oldLevel) {
             this.hp = 900 + 80 * this.level;
         }
     }

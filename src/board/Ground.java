@@ -23,6 +23,9 @@ public abstract class Ground {
         numPlayers++;
     }
 
+    public void setNumPlayers(int num) {
+        this.numPlayers = num;
+    }
 
     public GroundType getType() {
         return this.type;
@@ -39,4 +42,5 @@ public abstract class Ground {
     public Player getPlayer2() {
         return player2;
     }
+
 }

@@ -23,8 +23,15 @@ public class GameMaster {
         initializeBoard(gameInput);
         for (int i = 0; i < gameInput.getRoundNumber(); i++) {
             String moveData = gameInput.getRoundData().get(i);
-            //TODO: Take DoT damage
+            for (Player player : playersList) {
+                player.takeDoT();
+                if (player.getHp() <= 0) {
+                    player.died();
+                }
+            }
             movePlayers(moveData);
+            reinitializeGround(gameInput);
+            initializePlayersOnBoard();
 
             for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
                 for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
@@ -32,22 +39,31 @@ public class GameMaster {
                     if (board[xDim][yDim].getNumPlayers() == 2) {
                         Player p1 = board[xDim][yDim].getPlayer1();
                         Player p2 = board[xDim][yDim].getPlayer2();
-                        if (p1.getType().equals("W")) {
-                            p1.accept(p2, board[xDim][yDim]);
-                            p2.accept(p1, board[xDim][yDim]);
-                            fightOk = true;
-                        }
-                        if (p2.getType().equals("W") && !fightOk) {
-                            p2.accept(p1, board[xDim][yDim]);
-                            p1.accept(p2, board[xDim][yDim]);
-                            fightOk = true;
-                        }
-                        if (!fightOk) {
-                            p1.accept(p2, board[xDim][yDim]);
-                            p2.accept(p1, board[xDim][yDim]);
+                        if (!p1.isDead() && !p2.isDead()) {
+                            if (p1.getType().equals("W")) {
+                                p1.accept(p2, board[xDim][yDim]);
+                                p2.accept(p1, board[xDim][yDim]);
+                                fightOk = true;
+                            }
+                            if (p2.getType().equals("W") && !fightOk) {
+                                p2.accept(p1, board[xDim][yDim]);
+                                p1.accept(p2, board[xDim][yDim]);
+                                fightOk = true;
+                            }
+                            if (!fightOk) {
+                                p1.accept(p2, board[xDim][yDim]);
+                                p2.accept(p1, board[xDim][yDim]);
+                            }
                         }
                     }
                 }
+            }
+            System.out.println("Round: " + i);
+            for (Player player : playersList) {
+                if (!player.isDead()) {
+                    player.levelUp();
+                }
+                System.out.println(player.print());
             }
         }
     }
@@ -72,13 +88,34 @@ public class GameMaster {
                 }
             }
         }
+        initializePlayersOnBoard();
+    }
 
+    private void reinitializeGround(GameInput gameInput) {
+        for (int i = 0; i < gameInput.getXDim(); i++) {
+            for (int j = 0; j < gameInput.getYDim(); j++) {
+                board[i][j].setPlayer1(null);
+                board[i][j].setPlayer2(null);
+                board[i][j].setNumPlayers(0);
+            }
+        }
+    }
+
+    private void initializePlayersOnBoard() {
         for (Player player : playersList) {
-            Ground tempGround = board[player.getxPos()][player.getyPos()];
-            if (tempGround.getNumPlayers() == 0) {
-                board[player.getxPos()][player.getyPos()].setPlayer1(player);
-            } else {
-                board[player.getxPos()][player.getyPos()].setPlayer2(player);
+            if (!player.isDead()) {
+                Ground tempGround = board[player.getxPos()][player.getyPos()];
+                if (tempGround.getNumPlayers() == 0) {
+                    board[player.getxPos()][player.getyPos()].setPlayer1(player);
+                } else {
+                    if (tempGround.getNumPlayers() == 1) {
+                        if (tempGround.getPlayer1() != null) {
+                            board[player.getxPos()][player.getyPos()].setPlayer2(player);
+                        } else {
+                            board[player.getxPos()][player.getyPos()].setPlayer1(player);
+                        }
+                    }
+                }
             }
         }
     }
@@ -87,26 +124,27 @@ public class GameMaster {
         for (int id = 0; id < moveData.length(); id++) {
             char move = moveData.charAt(id);
             Player tempPlayer = playersList.get(id);
-            if (!tempPlayer.isStunned()) {
-                switch (move) {
-                    case 'U':
-                        tempPlayer.moveUp();
-                        //TODO: reset board players
-                        break;
-                    case 'D':
-                        tempPlayer.moveDown();
-                        break;
-                    case 'L':
-                        tempPlayer.moveLeft();
-                        break;
-                    case 'R':
-                        tempPlayer.moveRight();
-                        break;
-                }
-            } else {
-                tempPlayer.decStun();
-                if (tempPlayer.getStunnedRounds() == 0) {
-                    tempPlayer.removeStun();
+            if (!tempPlayer.isDead()) {
+                if (!tempPlayer.isStunned()) {
+                    switch (move) {
+                        case 'U':
+                            tempPlayer.moveUp();
+                            break;
+                        case 'D':
+                            tempPlayer.moveDown();
+                            break;
+                        case 'L':
+                            tempPlayer.moveLeft();
+                            break;
+                        case 'R':
+                            tempPlayer.moveRight();
+                            break;
+                    }
+                } else {
+                    tempPlayer.decStun();
+                    if (tempPlayer.getStunnedRounds() == 0) {
+                        tempPlayer.removeStun();
+                    }
                 }
             }
         }

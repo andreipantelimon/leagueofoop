@@ -22,76 +22,83 @@ public class Pyromancer extends Player {
     }
 
     void fight(Player player, Ground ground) {
-        System.out.println("Fight between " + this.getType() + " " + player.getType());
+        //System.out.println("Fight between " + this.getType() + " " + player.getType());
 
         int kill = 0;
+        boolean playerDied = false;
 
-        int fireblastDmg = 350 + 50 * this.level;
-
-        int fireblastModifier = 0;
-        switch (player.getType()) {
-            case "K": fireblastModifier = 20;
-                break;
-            case "P": fireblastModifier = -10;
-                break;
-            case "R": fireblastModifier = -20;
-                break;
-            case "W": fireblastModifier = 5;
-        }
-
-        fireblastDmg += Math.round(fireblastModifier * fireblastDmg / 100);
-
-        int groundModifier = 0;
+        float groundModifier = 0;
         if (ground.getType().equals(GroundType.Volcanic)) {
-            groundModifier = 25;
+            groundModifier = 0.25f;
         }
-        fireblastDmg += Math.round(groundModifier * fireblastDmg / 100);
 
-        player.setHp(player.getHp() - fireblastDmg);
+        float fireblastDmg = 350 + 50 * this.level;
+
+        float fireblastDmgAfterGround = fireblastDmg + (groundModifier * fireblastDmg);
+
+        this.damageToWizard += Math.round(fireblastDmgAfterGround);
+
+        float fireblastModifier = 0;
+        switch (player.getType()) {
+            case "K": fireblastModifier = 0.2f;
+                break;
+            case "P": fireblastModifier = -0.1f;
+                break;
+            case "R": fireblastModifier = -0.2f;
+                break;
+            case "W": fireblastModifier = 0.05f;
+        }
+
+        int fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround + (fireblastModifier * fireblastDmgAfterGround));
+
+        player.setHp(player.getHp() - fireblastDmgAfterRace);
 
         if (player.getHp() <= 0) {
             player.died();
             kill = 1;
+            playerDied = true;
         }
 
-        int igniteDmg = 150 + 20 * this.level;
-        int ignitePerRound = 50 + 30 * this.level;
+        float igniteDmg = 150 + 20 * this.level;
+        float ignitePerRound = 50 + 30 * this.level;
 
-        int igniteModifier = 0;
+        float igniteDmgAfterGround = igniteDmg + (groundModifier * igniteDmg);
+        float ignitePerRoundAfterGround = ignitePerRound + (groundModifier * ignitePerRound);
+
+        this.damageToWizard += Math.round(igniteDmgAfterGround);
+
+        float igniteModifier = 0;
         switch (player.getType()) {
-            case "K": igniteModifier = 20;
+            case "K": igniteModifier = 0.2f;
                 break;
-            case "P": igniteModifier = -10;
+            case "P": igniteModifier = -0.1f;
                 break;
-            case "R": igniteModifier = -20;
+            case "R": igniteModifier = -0.2f;
                 break;
-            case "W": igniteModifier = 5;
+            case "W": igniteModifier = 0.05f;
         }
 
-        igniteDmg += Math.round(igniteModifier * igniteDmg / 100);
-        igniteDmg += Math.round(groundModifier * igniteDmg / 100);
-        ignitePerRound += Math.round(igniteModifier * ignitePerRound / 100);
-        ignitePerRound += Math.round(groundModifier * ignitePerRound / 100);
+        int igniteDmgAfterRace = Math.round(igniteDmgAfterGround + (igniteModifier * igniteDmgAfterGround));
+        int ignitePerRoundAfterRace = Math.round(ignitePerRoundAfterGround + igniteModifier * ignitePerRoundAfterGround);
 
-        player.setHp(player.getHp() - igniteDmg);
+        player.setHp(player.getHp() - igniteDmgAfterRace);
 
-        //TODO: ignite DoT
+        player.setDoT(2, ignitePerRoundAfterRace);
 
-        if (player.getHp() <= 0) {
+        if (player.getHp() <= 0 && !playerDied) {
             player.died();
             kill = 1;
         }
 
         if (kill == 1) {
             this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
-            this.levelUp();
         }
     }
 
-    void levelUp() {
+    public void levelUp() {
         int oldLevel = this.level;
         super.levelUp();
-        if (oldLevel > this.level) {
+        if (this.level > oldLevel) {
             this.hp = 500 + 50 * this.level;
         }
     }

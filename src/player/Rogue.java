@@ -6,7 +6,7 @@ import board.GroundType;
 import static java.lang.Integer.max;
 
 public class Rogue extends Player {
-    int hitCounter = 0;
+    int hitCounter = 2;
     Rogue(int id, int xPos, int yPos) {
         super(id, xPos, yPos);
         this.hp = 600;
@@ -23,16 +23,16 @@ public class Rogue extends Player {
     }
 
     void fight(Player player, Ground ground) {
-        System.out.println("Fight between " + this.getType() + " " + player.getType());
-
         int kill = 0;
+        boolean crit = false;
+        boolean playerDied = false;
 
-        int backstabDmg = 200 + 20 * this.level;
+        float backstabDmg = 200 + 20 * this.level;
 
         if (hitCounter == 2) {
             if (ground.getType().equals(GroundType.Woods)) {
-                backstabDmg = Math.round(1.5f * backstabDmg);
-                hitCounter = 0;
+                crit = true;
+                hitCounter = 1;
             } else {
                 hitCounter = 0;
             }
@@ -40,75 +40,84 @@ public class Rogue extends Player {
             hitCounter++;
         }
 
-        int backstabModifier = 0;
+        float backstabDmgAfterCrit = backstabDmg;
+        if (crit) {
+            backstabDmgAfterCrit = 1.5f * backstabDmg;
+        }
+
+        float groundModifier = 0;
+        if (ground.getType().equals(GroundType.Woods)) {
+            groundModifier = 0.15f;
+        }
+
+        backstabDmgAfterCrit = backstabDmgAfterCrit + (groundModifier * backstabDmgAfterCrit);
+
+        this.damageToWizard += Math.round(backstabDmgAfterCrit);
+
+        float backstabModifier = 0;
         switch (player.getType()) {
-            case "K": backstabModifier = -10;
+            case "K": backstabModifier = -0.1f;
                 break;
             case "P":
             case "W":
-                backstabModifier = 25;
+                backstabModifier = 0.25f;
                 break;
-            case "R": backstabModifier = 20;
+            case "R": backstabModifier = 0.2f;
                 break;
         }
+        int backstabDmgAfterRace = Math.round(backstabDmgAfterCrit + (backstabModifier * backstabDmgAfterCrit));
 
-        backstabDmg += Math.round(backstabModifier * backstabDmg / 100);
-
-        int groundModifier = 0;
-        if (ground.getType().equals(GroundType.Woods)) {
-            groundModifier = 15;
-        }
-
-        backstabDmg += Math.round(groundModifier * backstabDmg / 100);
-
-        player.setHp(player.getHp() - backstabDmg);
+        player.setHp(player.getHp() - backstabDmgAfterRace);
         if (player.getHp() <= 0) {
             player.died();
             kill = 1;
+            playerDied = true;
         }
 
-        int paralysisDmg = 40 + 10 * this.level;
-        int paralysisModifier = 0;
+        float paralysisDmg = 40 + 10 * this.level;
+        float paralysisModifier = 0;
+
+        float paralysisDmgAfterGround = paralysisDmg + (groundModifier * paralysisDmg);
+
+        this.damageToWizard += Math.round(paralysisDmgAfterGround);
 
         switch (player.getType()) {
-            case "K": paralysisModifier = -20;
+            case "K": paralysisModifier = -0.2f;
                 break;
-            case "P": paralysisModifier = 20;
+            case "P": paralysisModifier = 0.2f;
                 break;
             case "W":
-                paralysisModifier = 25;
+                paralysisModifier = 0.25f;
                 break;
-            case "R": paralysisModifier = -10;
+            case "R": paralysisModifier = -0.1f;
                 break;
         }
 
-        paralysisDmg += Math.round(paralysisModifier * paralysisDmg / 100);
-        paralysisDmg += Math.round(groundModifier * paralysisDmg / 100);
+        int paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround + (paralysisModifier * paralysisDmgAfterGround));
 
-        //TODO: DoT
         int roundNumber = 3;
         if (ground.getType().equals(GroundType.Woods)) {
             roundNumber = 6;
         }
+        player.setDoT(roundNumber - 1, paralysisDmgAfterRace);
         player.stun(roundNumber);
 
-        player.setHp(player.getHp() - paralysisDmg);
+        player.setHp(player.getHp() - paralysisDmgAfterRace);
 
-        if (player.getHp() <= 0) {
+        if (player.getHp() <= 0 && !playerDied) {
             player.died();
             kill = 1;
         }
 
         if (kill == 1) {
             this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
-            this.levelUp();
         }
     }
 
-    void levelUp() {
+    public void levelUp() {
         int oldLevel = this.level;
         super.levelUp();
-        if (oldLevel > this.level) {
+        if (this.level > oldLevel) {
             this.hp = 600 + 40 * this.level;
         }
     }
