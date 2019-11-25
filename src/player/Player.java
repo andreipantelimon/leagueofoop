@@ -7,9 +7,11 @@ public abstract class Player {
     int xPos = -1;
     int yPos = -1;
     int hp = -1;
+    int maxHp = 0;
     int xp = 0;
     int level = 0;
     int damageToWizard = 0;
+    int stunnedRounds = 0;
     boolean isDead = false;
     boolean isStunned = false;
     PlayerType type = null;
@@ -28,7 +30,13 @@ public abstract class Player {
         System.out.println("Abstract fight");
     }
 
-    String getType() {
+    void levelUp() {
+        while (this.xp >= (250 + this.level * 50)) {
+            this.level++;
+        }
+    }
+
+    public String getType() {
         return null;
     }
 
@@ -96,7 +104,8 @@ public abstract class Player {
         return this.level;
     }
 
-    public void stun() {
+    public void stun(int rounds) {
+        this.stunnedRounds = rounds;
         this.isStunned = true;
     }
 
@@ -106,5 +115,25 @@ public abstract class Player {
 
     public void removeStun() {
         this.isStunned = false;
+    }
+
+    public void decStun() {
+        this.stunnedRounds--;
+    }
+
+    public int getStunnedRounds() {
+        return this.stunnedRounds;
+    }
+
+    public int getMaxHp() {
+        return this.maxHp;
+    }
+
+    public int getDamageToWizard() {
+        return this.damageToWizard;
+    }
+
+    public void resetDamageToWizard() {
+        this.damageToWizard = 0;
     }
 }

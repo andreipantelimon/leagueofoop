@@ -10,6 +10,7 @@ public class Rogue extends Player {
     Rogue(int id, int xPos, int yPos) {
         super(id, xPos, yPos);
         this.hp = 600;
+        this.maxHp = 600;
         this.type = PlayerType.Rogue;
     }
 
@@ -84,7 +85,12 @@ public class Rogue extends Player {
         paralysisDmg += Math.round(paralysisModifier * paralysisDmg / 100);
         paralysisDmg += Math.round(groundModifier * paralysisDmg / 100);
 
-        //TODO: DoT + stun X rounds
+        //TODO: DoT
+        int roundNumber = 3;
+        if (ground.getType().equals(GroundType.Woods)) {
+            roundNumber = 6;
+        }
+        player.stun(roundNumber);
 
         player.setHp(player.getHp() - paralysisDmg);
 
@@ -95,7 +101,15 @@ public class Rogue extends Player {
 
         if (kill == 1) {
             this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
-            //TODO: level up
+            this.levelUp();
+        }
+    }
+
+    void levelUp() {
+        int oldLevel = this.level;
+        super.levelUp();
+        if (oldLevel > this.level) {
+            this.hp = 600 + 40 * this.level;
         }
     }
 }

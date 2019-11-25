@@ -28,11 +28,24 @@ public class GameMaster {
 
             for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
                 for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
+                    boolean fightOk = false;
                     if (board[xDim][yDim].getNumPlayers() == 2) {
                         Player p1 = board[xDim][yDim].getPlayer1();
                         Player p2 = board[xDim][yDim].getPlayer2();
-                        p1.accept(p2, board[xDim][yDim]);
-                        p2.accept(p1, board[xDim][yDim]);
+                        if (p1.getType().equals("W")) {
+                            p1.accept(p2, board[xDim][yDim]);
+                            p2.accept(p1, board[xDim][yDim]);
+                            fightOk = true;
+                        }
+                        if (p2.getType().equals("W") && !fightOk) {
+                            p2.accept(p1, board[xDim][yDim]);
+                            p1.accept(p2, board[xDim][yDim]);
+                            fightOk = true;
+                        }
+                        if (!fightOk) {
+                            p1.accept(p2, board[xDim][yDim]);
+                            p2.accept(p1, board[xDim][yDim]);
+                        }
                     }
                 }
             }
@@ -91,7 +104,10 @@ public class GameMaster {
                         break;
                 }
             } else {
-                tempPlayer.removeStun();
+                tempPlayer.decStun();
+                if (tempPlayer.getStunnedRounds() == 0) {
+                    tempPlayer.removeStun();
+                }
             }
         }
     }

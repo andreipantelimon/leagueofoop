@@ -9,6 +9,7 @@ public class Knight extends Player {
     Knight(int id, int xPos, int yPos) {
         super(id, xPos, yPos);
         this.hp = 900;
+        this.maxHp = 900;
         this.type = PlayerType.Knight;
     }
 
@@ -34,7 +35,7 @@ public class Knight extends Player {
         if (ground.getType().equals(GroundType.Land)) {
             groundModifier = 15;
         }
-        //TODO: de verificat daca e bine asa
+
         this.damageToWizard += executeDmg + Math.round(groundModifier * executeDmg / 100);
 
         int executeModifier = 0;
@@ -59,6 +60,9 @@ public class Knight extends Player {
 
         int slamDmg = 100 + 40 * this.level;
         int slamModifier = 0;
+
+        this.damageToWizard += slamDmg + Math.round(slamDmg * groundModifier / 100);
+
         switch (player.getType()) {
             case "K": slamModifier = 20;
                 break;
@@ -69,6 +73,7 @@ public class Knight extends Player {
             case "W": slamModifier = 5;
         }
         slamDmg += Math.round(slamModifier * slamDmg / 100);
+        slamDmg += Math.round(groundModifier * slamDmg / 100);
 
         player.setHp(player.getHp() - slamDmg);
         if (player.getHp() <= 0) {
@@ -76,11 +81,19 @@ public class Knight extends Player {
             kill = 1;
         }
 
-        player.stun();
+        player.stun(1);
 
         if (kill == 1) {
             this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
-            //TODO: level up
+            this.levelUp();
+        }
+    }
+
+    void levelUp() {
+        int oldLevel = this.level;
+        super.levelUp();
+        if (oldLevel > this.level) {
+            this.hp = 900 + 80 * this.level;
         }
     }
 }

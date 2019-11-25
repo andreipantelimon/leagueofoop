@@ -9,6 +9,7 @@ public class Pyromancer extends Player {
     Pyromancer(int id, int xPos, int yPos) {
         super(id, xPos, yPos);
         this.hp = 500;
+        this.maxHp = 500;
         this.type = PlayerType.Pyromancer;
     }
 
@@ -83,8 +84,15 @@ public class Pyromancer extends Player {
 
         if (kill == 1) {
             this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
-            //TODO: level up
+            this.levelUp();
         }
+    }
 
+    void levelUp() {
+        int oldLevel = this.level;
+        super.levelUp();
+        if (oldLevel > this.level) {
+            this.hp = 500 + 50 * this.level;
+        }
     }
 }
