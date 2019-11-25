@@ -20,6 +20,7 @@ public final class Main {
         GameMaster.getInstance().playTheGame(gameInput);
 
         for (Player player : GameMaster.getInstance().getPlayersList()) {
+            System.out.println(player);
             gameIOLoader.write(player.toString());
         }
     }

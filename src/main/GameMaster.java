@@ -24,6 +24,7 @@ public class GameMaster {
         for (int i = 0; i < gameInput.getRoundNumber(); i++) {
             String moveData = gameInput.getRoundData().get(i);
             for (Player player : playersList) {
+                player.resetDamageToWizard();
                 player.takeDoT();
                 if (player.getHp() <= 0) {
                     player.died();
@@ -32,6 +33,9 @@ public class GameMaster {
             movePlayers(moveData);
             reinitializeGround(gameInput);
             initializePlayersOnBoard();
+
+            // plYERUL 8-9 SE BATE CU 19-20
+            // rundele 21-22
 
             for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
                 for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {

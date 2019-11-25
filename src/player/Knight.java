@@ -46,7 +46,9 @@ public class Knight extends Player {
             case "W": executeModifier = -0.2f;
         }
         float executeDmgAfterGround = executeDmg + (groundModifier * executeDmg);
+
         this.damageToWizard += Math.round(executeDmgAfterGround);
+
         int executeDmgAfterRace = Math.round(executeDmgAfterGround + executeModifier * executeDmgAfterGround);
 
         if (player.getHp() <= executeHpLimit) {

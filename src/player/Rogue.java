@@ -99,7 +99,7 @@ public class Rogue extends Player {
         if (ground.getType().equals(GroundType.Woods)) {
             roundNumber = 6;
         }
-        player.setDoT(roundNumber - 1, paralysisDmgAfterRace);
+        player.setDoT(roundNumber, paralysisDmgAfterRace);
         player.stun(roundNumber);
 
         player.setHp(player.getHp() - paralysisDmgAfterRace);

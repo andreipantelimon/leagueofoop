@@ -59,7 +59,7 @@ public class Wizard extends Player {
 
         if (!player.getType().equals("W")) {
             float deflectPercent = 0.35f + 0.2f * this.level;
-            deflectPercent = Math.min(deflectPercent, 0.7f);
+            deflectPercent = min(deflectPercent, 0.7f);
 
             float deflectPercentAfterGround = deflectPercent + (groundModifier * deflectPercent);
 
