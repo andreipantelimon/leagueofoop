@@ -1,11 +1,14 @@
 package main;
 
-import player.*;
+import player.Player;
+import player.PlayerFactory;
 
 import java.io.IOException;
 
 public final class Main {
-    public static void main(String[] args) throws IOException {
+    private Main() { }
+    public static void main(final String[] args) throws IOException {
+        //Game input is read.
         GameIOLoader gameIOLoader = new GameIOLoader(args[0], args[1]);
         GameInput gameInput = gameIOLoader.load();
 
@@ -14,13 +17,16 @@ public final class Main {
             int tempXPos = gameInput.getPlayerData().get(i).getSecond();
             int tempYPos = gameInput.getPlayerData().get(i).getThird();
 
-            GameMaster.getInstance().addPlayer(PlayerFactory.createPlayer(i, tempType, tempXPos, tempYPos));
+            // The factory creates the players.
+            GameMaster.getInstance().addPlayer(
+                    PlayerFactory.createPlayer(i, tempType, tempXPos, tempYPos));
         }
 
+        //Game is played.
         GameMaster.getInstance().playTheGame(gameInput);
 
+        //Output is written to the file.
         for (Player player : GameMaster.getInstance().getPlayersList()) {
-            System.out.println(player);
             gameIOLoader.write(player.toString());
         }
     }

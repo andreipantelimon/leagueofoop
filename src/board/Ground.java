@@ -3,44 +3,43 @@ package board;
 import player.Player;
 
 public abstract class Ground {
-    Player player1 = null;
-    Player player2 = null;
-    int numPlayers = 0;
-    GroundType type;
+    // Class that keeps 2 players that will fight and ground type.
+    private Player player1 = null;
+    private Player player2 = null;
+    private int numPlayers = 0;
+    private GroundType type;
 
-    public String toString() {
-        return "Type: " + this.type + " Player1: " + this.player1 + " Player2: " + this.player2;
-    }
-
-
-    public void setPlayer1(Player player) {
+    public final void setPlayer1(final Player player) {
         this.player1 = player;
         numPlayers++;
     }
 
-    public void setPlayer2(Player player) {
+    public final void setPlayer2(final Player player) {
         this.player2 = player;
         numPlayers++;
     }
 
-    public void setNumPlayers(int num) {
+    public final void setNumPlayers(final int num) {
         this.numPlayers = num;
     }
 
-    public GroundType getType() {
+    public final GroundType getType() {
         return this.type;
     }
 
-    public int getNumPlayers() {
+    public final int getNumPlayers() {
         return this.numPlayers;
     }
 
-    public Player getPlayer1() {
+    public final Player getPlayer1() {
         return player1;
     }
 
-    public Player getPlayer2() {
+    public final Player getPlayer2() {
         return player2;
     }
 
+    public final void setType(final GroundType type) {
+        this.type = type;
+    }
 }

@@ -1,30 +1,37 @@
 package main;
 
-import board.*;
-import player.*;
+import board.Desert;
+import board.Ground;
+import board.Land;
+import board.Volcanic;
+import board.Woods;
+import player.Player;
 
 import java.util.ArrayList;
 
-public class GameMaster {
-    ArrayList<Player> playersList = new ArrayList<>();
-    Ground[][] board;
+//Singleton pattern.
+
+final class GameMaster {
+    private ArrayList<Player> playersList = new ArrayList<>();
+    private Ground[][] board;
     private static GameMaster instance = null;
 
-    private GameMaster(){}
+    private GameMaster() { }
 
-    public static GameMaster getInstance() {
+    static GameMaster getInstance() {
         if (instance == null) {
             instance = new GameMaster();
         }
         return instance;
     }
 
-    public void playTheGame(GameInput gameInput) {
+    void playTheGame(final GameInput gameInput) {
         initializeBoard(gameInput);
         for (int i = 0; i < gameInput.getRoundNumber(); i++) {
             String moveData = gameInput.getRoundData().get(i);
             for (Player player : playersList) {
                 player.resetDamageToWizard();
+                // Player takes over time damage and dies if necessary.
                 player.takeDoT();
                 if (player.getHp() <= 0) {
                     player.died();
@@ -34,9 +41,7 @@ public class GameMaster {
             reinitializeGround(gameInput);
             initializePlayersOnBoard();
 
-            // plYERUL 8-9 SE BATE CU 19-20
-            // rundele 21-22
-
+            //The players fight, if one of them is Wizard he attacks second.
             for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
                 for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
                     boolean fightOk = false;
@@ -62,17 +67,16 @@ public class GameMaster {
                     }
                 }
             }
-            System.out.println("Round: " + i);
             for (Player player : playersList) {
                 if (!player.isDead()) {
                     player.levelUp();
                 }
-                System.out.println(player.print());
             }
         }
     }
 
-    private void initializeBoard(GameInput gameInput) {
+    //Playing board is declared.
+    private void initializeBoard(final GameInput gameInput) {
         board = new Ground[gameInput.getXDim()][gameInput.getYDim()];
         for (int i = 0; i < gameInput.getXDim(); i++) {
             String tempData = gameInput.getGroundData().get(i);
@@ -95,7 +99,8 @@ public class GameMaster {
         initializePlayersOnBoard();
     }
 
-    private void reinitializeGround(GameInput gameInput) {
+    //Playing board is cleared.
+    private void reinitializeGround(final GameInput gameInput) {
         for (int i = 0; i < gameInput.getXDim(); i++) {
             for (int j = 0; j < gameInput.getYDim(); j++) {
                 board[i][j].setPlayer1(null);
@@ -105,6 +110,7 @@ public class GameMaster {
         }
     }
 
+    //Players with new / old coordinates are put on board.
     private void initializePlayersOnBoard() {
         for (Player player : playersList) {
             if (!player.isDead()) {
@@ -124,7 +130,8 @@ public class GameMaster {
         }
     }
 
-    private void movePlayers(String moveData) {
+    //Players are moved and stun is calculated.
+    private void movePlayers(final String moveData) {
         for (int id = 0; id < moveData.length(); id++) {
             char move = moveData.charAt(id);
             Player tempPlayer = playersList.get(id);
@@ -143,6 +150,7 @@ public class GameMaster {
                         case 'R':
                             tempPlayer.moveRight();
                             break;
+                        default:
                     }
                 } else {
                     tempPlayer.decStun();
@@ -154,11 +162,11 @@ public class GameMaster {
         }
     }
 
-    public ArrayList<Player> getPlayersList() {
+    ArrayList<Player> getPlayersList() {
         return playersList;
     }
 
-    public void addPlayer(Player player) {
+    void addPlayer(final Player player) {
         playersList.add(player);
     }
 }

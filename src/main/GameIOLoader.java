@@ -38,6 +38,7 @@ final class GameIOLoader {
             playerNumber = fs.nextInt();
 
             for (int i = 0; i < playerNumber; i++) {
+                // Player data is stored in an external Triplet class.
                 playerData.add(new Triplet<>(fs.nextWord(), fs.nextInt(), fs.nextInt()));
             }
 
@@ -53,10 +54,11 @@ final class GameIOLoader {
             e1.printStackTrace();
         }
 
-        return new GameInput(xDim, yDim, groundData, playerNumber, playerData, roundNumber, roundData);
+        return new GameInput(xDim, yDim, groundData,
+                playerNumber, playerData, roundNumber, roundData);
     }
 
-    void write(String string) throws IOException {
+    void write(final String string) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(mOutputPath, true));
         writer.write(string);
         writer.newLine();

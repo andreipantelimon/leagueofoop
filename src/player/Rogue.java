@@ -2,33 +2,51 @@ package player;
 
 import board.Ground;
 import board.GroundType;
+import main.Constants;
 
 import static java.lang.Integer.max;
 
 public class Rogue extends Player {
-    int hitCounter = 2;
-    Rogue(int id, int xPos, int yPos) {
+    private int hitCounter = 2;
+    Rogue(final int id, final int xPos, final int yPos) {
         super(id, xPos, yPos);
-        this.hp = 600;
-        this.maxHp = 600;
-        this.type = PlayerType.Rogue;
+        this.setHp(Constants.R_MAX_HP);
+        this.setMaxHp(Constants.R_MAX_HP);
+        this.setType(PlayerType.Rogue);
     }
 
+    /**
+     * Returns the Rogue type.
+     * @return String
+     */
     public String getType() {
         return "R";
     }
 
-    public void accept(Player player, Ground ground) {
+    /**
+     * Accepts the fight.
+     * @param player Any player
+     * @param ground Any ground
+     */
+    public void accept(final Player player, final Ground ground) {
         player.fight(this, ground);
     }
 
-    void fight(Player player, Ground ground) {
+    /**
+     * {@inheritDoc}
+     * @param player Any player.
+     * @param ground Ground that he is on.
+     */
+    @Override
+    final void fight(final Player player, final Ground ground) {
         int kill = 0;
         boolean crit = false;
         boolean playerDied = false;
 
-        float backstabDmg = 200 + 20 * this.level;
+        float backstabDmg = Constants.BACKSTAB_BASE_DMG
+                + Constants.BACKSTAB_LEVEL_DMG * this.getLevel();
 
+        // Crit is applied if necessary.
         if (hitCounter == 2) {
             if (ground.getType().equals(GroundType.Woods)) {
                 crit = true;
@@ -42,31 +60,37 @@ public class Rogue extends Player {
 
         float backstabDmgAfterCrit = backstabDmg;
         if (crit) {
-            backstabDmgAfterCrit = 1.5f * backstabDmg;
+            backstabDmgAfterCrit = Constants.ROGUE_CRIT * backstabDmg;
         }
 
+        //Ground modifier.
         float groundModifier = 0;
         if (ground.getType().equals(GroundType.Woods)) {
-            groundModifier = 0.15f;
+            groundModifier = Constants.WOODS_MOD;
         }
 
         backstabDmgAfterCrit = backstabDmgAfterCrit + (groundModifier * backstabDmgAfterCrit);
 
-        this.damageToWizard += Math.round(backstabDmgAfterCrit);
+        //Damage for the wizard if it is in battle him.
+        this.addDamageToWizard(Math.round(backstabDmgAfterCrit));
 
+        //Backstab race modifier.
         float backstabModifier = 0;
         switch (player.getType()) {
-            case "K": backstabModifier = -0.1f;
+            case "K": backstabModifier = Constants.R_BACKSTAB_K_MOD;
                 break;
             case "P":
             case "W":
-                backstabModifier = 0.25f;
+                backstabModifier = Constants.R_BACKSTAB_PW_MOD;
                 break;
-            case "R": backstabModifier = 0.2f;
+            case "R": backstabModifier = Constants.R_BACKSTAB_R_MOD;
                 break;
+            default:
         }
-        int backstabDmgAfterRace = Math.round(backstabDmgAfterCrit + (backstabModifier * backstabDmgAfterCrit));
+        int backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
+                + (backstabModifier * backstabDmgAfterCrit));
 
+        //Backstab damage is calculated and applied.
         player.setHp(player.getHp() - backstabDmgAfterRace);
         if (player.getHp() <= 0) {
             player.died();
@@ -74,33 +98,39 @@ public class Rogue extends Player {
             playerDied = true;
         }
 
-        float paralysisDmg = 40 + 10 * this.level;
+        float paralysisDmg = Constants.PARALYSIS_BASE_DMG
+                + Constants.PARALYSIS_LEVEL_DMG * this.getLevel();
         float paralysisModifier = 0;
 
         float paralysisDmgAfterGround = paralysisDmg + (groundModifier * paralysisDmg);
 
-        this.damageToWizard += Math.round(paralysisDmgAfterGround);
+        //Damage for the wizard if it is in battle him.
+        this.addDamageToWizard(Math.round(paralysisDmgAfterGround));
 
         switch (player.getType()) {
-            case "K": paralysisModifier = -0.2f;
+            case "K": paralysisModifier = Constants.R_PARALYSIS_K_MOD;
                 break;
-            case "P": paralysisModifier = 0.2f;
+            case "P": paralysisModifier = Constants.R_PARALYSIS_P_MOD;
                 break;
             case "W":
-                paralysisModifier = 0.25f;
+                paralysisModifier = Constants.R_PARALYSIS_W_MOD;
                 break;
-            case "R": paralysisModifier = -0.1f;
+            case "R": paralysisModifier = Constants.R_PARALYSIS_R_MOD;
                 break;
+            default:
         }
 
-        int paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround + (paralysisModifier * paralysisDmgAfterGround));
+        int paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
+                + (paralysisModifier * paralysisDmgAfterGround));
 
-        int roundNumber = 3;
+        int roundNumber = Constants.R_PARALYSIS_BASE_ROUND;
         if (ground.getType().equals(GroundType.Woods)) {
-            roundNumber = 6;
+            roundNumber = Constants.R_PARALYSIS_EXT_ROUND;
         }
         player.setDoT(roundNumber, paralysisDmgAfterRace);
         player.stun(roundNumber);
+
+        //Paralysis damage and stun is applied.
 
         player.setHp(player.getHp() - paralysisDmgAfterRace);
 
@@ -109,16 +139,19 @@ public class Rogue extends Player {
             kill = 1;
         }
 
+        //Xp is added if necessary.
         if (kill == 1) {
-            this.xp += max(0, 200 - (this.level - player.getLevel()) * 40);
+            this.addXp(max(0, Constants.BASE_XP
+                    - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
         }
     }
 
-    public void levelUp() {
-        int oldLevel = this.level;
+    //Level up function.
+    public final void levelUp() {
+        int oldLevel = this.getLevel();
         super.levelUp();
-        if (this.level > oldLevel) {
-            this.hp = 600 + 40 * this.level;
+        if (this.getLevel() > oldLevel) {
+            this.setHp(Constants.R_MAX_HP + Constants.R_LEVEL_HP * this.getLevel());
         }
     }
 }

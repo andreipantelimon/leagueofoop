@@ -1,164 +1,199 @@
 package player;
 
 import board.Ground;
+import main.Constants;
 
 public abstract class Player {
-    int id = -1;
-    int xPos = -1;
-    int yPos = -1;
-    int hp = -1;
-    int maxHp = 0;
-    int xp = 0;
-    int level = 0;
-    int damageOverTime = 0;
-    int damageOverTimeRounds = 0;
-    int damageToWizard = 0;
-    int stunnedRounds = 0;
-    boolean isDead = false;
-    boolean isStunned = false;
-    PlayerType type = null;
+    private int id;
+    private int xPos;
+    private int yPos;
+    private int hp = -1;
+    private int maxHp = 0;
+    private int xp = 0;
+    private int level = 0;
+    private int damageOverTime = 0;
+    private int damageOverTimeRounds = 0;
+    private int damageToWizard = 0;
+    private int stunnedRounds = 0;
+    private boolean isDead = false;
+    private boolean isStunned = false;
+    private PlayerType type = null;
 
-    Player(int id, int xPos, int yPos) {
+    Player(final int id, final int xPos, final int yPos) {
         this.id = id;
         this.xPos = xPos;
         this.yPos = yPos;
     }
 
-    public void accept(Player player, Ground ground) {
+    /**
+     * Overwritten in every player class for visitor pattern.
+     */
+    public void accept(final Player player, final Ground ground) {
         player.fight(this, ground);
     }
 
-    void fight(Player player, Ground ground) {
-        System.out.println("Abstract fight");
-    }
+    /**
+     * Fight function.
+     * @param player Any player.
+     * @param ground Ground that he is on.
+     * @see Knight
+     * @see Pyromancer
+     * @see Wizard
+     * @see Rogue
+     */
+    void fight(final Player player, final Ground ground) { }
 
+    /**
+     * Level Up function.
+     */
     public void levelUp() {
-        while (this.xp >= (250 + this.level * 50)) {
+        while (this.xp >= (Constants.LEVELUP_BASE_XP
+                + this.level * Constants.LEVELUP_LEVEL_XP)) {
             this.level++;
         }
     }
 
-    public void takeDoT() {
+    //Function that allows player to take damage over time.
+    public final void takeDoT() {
         if (damageOverTimeRounds != 0) {
             this.hp -= damageOverTime;
             damageOverTimeRounds--;
-            //System.out.println(this.id + " " + this.getType() + " took: " + this.damageOverTime);
         } else {
             damageOverTime = 0;
         }
     }
 
-    public void setDoT(int rounds, int damage) {
+    final void setDoT(final int rounds, final int damage) {
         this.damageOverTimeRounds = rounds;
         this.damageOverTime = damage;
     }
 
+    /**
+     * Returns the type of every player.
+     */
     public String getType() {
         return null;
     }
 
-    public void moveUp() {
+    public final void moveUp() {
         if (!isDead) {
             this.xPos--;
         }
     }
 
-    public void moveDown() {
+    public final void moveDown() {
         if (!isDead) {
             this.xPos++;
         }
     }
 
-    public void moveLeft() {
+    public final void moveLeft() {
         if (!isDead) {
             this.yPos--;
         }
     }
 
-    public void moveRight() {
+    public final void moveRight() {
         if (!isDead) {
             this.yPos++;
         }
     }
 
-    public int getId() {
-        return this.id;
-    }
-
+    /**
+     * Prints the player.
+     * @return String
+     */
     public String toString() {
         if (isDead) {
             return this.getType() + " dead";
         } else {
-            return this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos;
+            return this.getType() + " " + this.level + " "
+                    + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos;
         }
     }
 
-    public String print() {
-        if (isDead) {
-            return this.id + " " + this.getType() + " dead";
-        } else {
-            return this.id + " " + this.getType() + " " + this.level + " " + this.xp + " " + this.hp + " " + this.xPos + " " + this.yPos;
-        }
-    }
-
-    public int getxPos() {
+    public final int getxPos() {
         return xPos;
     }
 
-    public int getyPos() {
+    public final int getyPos() {
         return yPos;
     }
 
-    public int getHp() {
+    public final int getHp() {
         return this.hp;
     }
 
-    public void died() {
-        this.isDead = true;
-    }
-
-    public void setHp(int x) {
+    final void setHp(final int x) {
         this.hp = x;
     }
 
-    public boolean isDead() {
+    public final void died() {
+        this.isDead = true;
+    }
+
+    public final boolean isDead() {
         return this.isDead;
     }
 
-    public int getLevel() {
+    final int getLevel() {
         return this.level;
     }
 
-    public void stun(int rounds) {
+    final void stun(final int rounds) {
         this.stunnedRounds = rounds;
         this.isStunned = true;
     }
 
-    public boolean isStunned() {
+    public final boolean isStunned() {
         return this.isStunned;
     }
 
-    public void removeStun() {
+    public final void removeStun() {
         this.isStunned = false;
     }
 
-    public void decStun() {
+    public final void decStun() {
         this.stunnedRounds--;
     }
 
-    public int getStunnedRounds() {
+    public final int getStunnedRounds() {
         return this.stunnedRounds;
     }
 
-    public int getMaxHp() {
+    final int getMaxHp() {
         return this.maxHp;
     }
 
-    public int getDamageToWizard() {
+    final int getDamageToWizard() {
         return this.damageToWizard;
     }
 
-    public void resetDamageToWizard() {
+    public final void resetDamageToWizard() {
         this.damageToWizard = 0;
+    }
+
+    final void setMaxHp(final int maxHp) {
+        this.maxHp = maxHp;
+    }
+
+    public final void setDead(final boolean dead) {
+        isDead = dead;
+    }
+
+    /**
+     * Sets the type of player.
+     * @param type Rogue, Pyro, Knight or Wizard
+     */
+    public void setType(final PlayerType type) {
+        this.type = type;
+    }
+
+    final void addDamageToWizard(final int x) {
+        this.damageToWizard += x;
+    }
+
+    final void addXp(final int x) {
+        this.xp += x;
     }
 }

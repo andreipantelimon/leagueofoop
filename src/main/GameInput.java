@@ -21,8 +21,9 @@ public class GameInput {
         roundData = null;
     }
 
-    GameInput(final int xDim, final int yDim, final ArrayList<String> groundData, final int playerNumber,
-              final ArrayList<Triplet<String, Integer, Integer>> playerData, final int roundNumber, final ArrayList<String> roundData) {
+    GameInput(final int xDim, final int yDim, final ArrayList<String> groundData,
+              final int playerNumber, final ArrayList<Triplet<String, Integer, Integer>> playerData,
+              final int roundNumber, final ArrayList<String> roundData) {
         this.xDim = xDim;
         this.yDim = yDim;
         this.groundData = groundData;
@@ -32,31 +33,31 @@ public class GameInput {
         this.roundData = roundData;
     }
 
-    public int getXDim() {
+    final int getXDim() {
         return xDim;
     }
 
-    public int getYDim() {
+    final int getYDim() {
         return yDim;
     }
 
-    public ArrayList<String> getGroundData() {
+    final ArrayList<String> getGroundData() {
         return groundData;
     }
 
-    public int getPlayerNumber() {
+    final int getPlayerNumber() {
         return playerNumber;
     }
 
-    public ArrayList<Triplet<String, Integer, Integer>> getPlayerData() {
+    final ArrayList<Triplet<String, Integer, Integer>> getPlayerData() {
         return playerData;
     }
 
-    public int getRoundNumber() {
+    final int getRoundNumber() {
         return roundNumber;
     }
 
-    public ArrayList<String> getRoundData() {
+    final ArrayList<String> getRoundData() {
         return roundData;
     }
 }
