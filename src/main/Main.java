@@ -22,6 +22,8 @@ public final class Main {
                     PlayerFactory.createPlayer(i, tempType, tempXPos, tempYPos));
         }
 
+        GameMaster.getInstance().addAngels(gameInput);
+
         //Game is played.
         GameMaster.getInstance().playTheGame(gameInput);
 

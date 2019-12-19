@@ -3,6 +3,8 @@ package player;
 import board.Ground;
 import board.GroundType;
 import main.Constants;
+import strategy.ConcreteStrategy;
+import strategy.Strategy;
 
 import static java.lang.Integer.max;
 
@@ -40,6 +42,12 @@ public class Knight extends Player {
     final void fight(final Player player, final Ground ground) {
         int kill = 0;
         boolean playerDied = false;
+
+        //TODO: Cand se aplcia strategia
+        Strategy strategy = new ConcreteStrategy();
+        strategy.applyStrategy(this);
+
+
         float executeDmg = Constants.EXECUTE_BASE_DMG
                 + Constants.EXECUTE_LEVEL_DMG * this.getLevel();
 

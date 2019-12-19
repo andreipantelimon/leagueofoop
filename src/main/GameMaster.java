@@ -1,5 +1,6 @@
 package main;
 
+import angel.Angel;
 import board.Desert;
 import board.Ground;
 import board.Land;
@@ -8,11 +9,15 @@ import board.Woods;
 import player.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 //Singleton pattern.
 
 final class GameMaster {
     private ArrayList<Player> playersList = new ArrayList<>();
+    private HashMap<Integer, Angel> angelsMap = new HashMap<>();
     private Ground[][] board;
     private static GameMaster instance = null;
 
@@ -159,6 +164,15 @@ final class GameMaster {
                     }
                 }
             }
+        }
+    }
+
+    void addAngels(GameInput gameInput) {
+        Iterator it = gameInput.getAngelsMap().entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            System.out.println(pair.getKey() + " " + pair.getValue());
+
         }
     }
 

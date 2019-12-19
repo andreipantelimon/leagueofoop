@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GameInput {
     private int xDim;
@@ -10,6 +11,7 @@ public class GameInput {
     private ArrayList<Triplet<String, Integer, Integer>> playerData;
     private int roundNumber;
     private ArrayList<String> roundData;
+    private HashMap<Integer, ArrayList<String>> angelsMap;
 
     public GameInput() {
         xDim = -1;
@@ -23,7 +25,7 @@ public class GameInput {
 
     GameInput(final int xDim, final int yDim, final ArrayList<String> groundData,
               final int playerNumber, final ArrayList<Triplet<String, Integer, Integer>> playerData,
-              final int roundNumber, final ArrayList<String> roundData) {
+              final int roundNumber, final ArrayList<String> roundData, final HashMap angelsMap) {
         this.xDim = xDim;
         this.yDim = yDim;
         this.groundData = groundData;
@@ -31,6 +33,7 @@ public class GameInput {
         this.playerData = playerData;
         this.roundNumber = roundNumber;
         this.roundData = roundData;
+        this.angelsMap = angelsMap;
     }
 
     final int getXDim() {
@@ -59,5 +62,9 @@ public class GameInput {
 
     final ArrayList<String> getRoundData() {
         return roundData;
+    }
+
+    final HashMap getAngelsMap() {
+        return angelsMap;
     }
 }

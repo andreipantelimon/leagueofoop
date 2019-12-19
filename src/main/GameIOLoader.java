@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import fileio.FileSystem;
 
@@ -20,6 +21,7 @@ final class GameIOLoader {
         ArrayList<String> groundData = new ArrayList<>();
         ArrayList<Triplet<String, Integer, Integer>> playerData = new ArrayList<>();
         ArrayList<String> roundData = new ArrayList<>();
+        HashMap<Integer, ArrayList<String>> angelsMap = new HashMap<>();
         int xDim = -1;
         int yDim = -1;
         int playerNumber = -1;
@@ -48,6 +50,15 @@ final class GameIOLoader {
                 roundData.add(fs.nextWord());
             }
 
+            for (int i = 0; i < roundNumber; i++) {
+                int tempCount = fs.nextInt();
+                ArrayList<String> tempArray = new ArrayList<>();
+                for (int j = 0; j < tempCount; j++) {
+                    tempArray.add(fs.nextWord());
+                }
+                angelsMap.put(i, tempArray);
+            }
+
             fs.close();
 
         } catch (Exception e1) {
@@ -55,7 +66,7 @@ final class GameIOLoader {
         }
 
         return new GameInput(xDim, yDim, groundData,
-                playerNumber, playerData, roundNumber, roundData);
+                playerNumber, playerData, roundNumber, roundData, angelsMap);
     }
 
     void write(final String string) throws IOException {

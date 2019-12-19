@@ -161,7 +161,7 @@ public abstract class Player {
         return this.stunnedRounds;
     }
 
-    final int getMaxHp() {
+    public final int getMaxHp() {
         return this.maxHp;
     }
 
