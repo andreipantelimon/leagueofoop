@@ -22,12 +22,13 @@ public final class Main {
                     PlayerFactory.createPlayer(i, tempType, tempXPos, tempYPos));
         }
 
-        GameMaster.getInstance().addAngels(gameInput);
+        //GameMaster.getInstance().addAngels(gameInput);
 
         //Game is played.
-        GameMaster.getInstance().playTheGame(gameInput);
+        GameMaster.getInstance().playTheGame(gameInput, gameIOLoader);
 
         //Output is written to the file.
+        gameIOLoader.write("~~ Results ~~");
         for (Player player : GameMaster.getInstance().getPlayersList()) {
             gameIOLoader.write(player.toString());
         }

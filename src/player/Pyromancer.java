@@ -50,10 +50,10 @@ public class Pyromancer extends Player {
         float fireblastDmg = Constants.FIREBLAST_BASE_DMG
                 + Constants.FIREBLAST_LEVEL_DMG * this.getLevel();
 
-        float fireblastDmgAfterGround = fireblastDmg + (groundModifier * fireblastDmg);
+        int fireblastDmgAfterGround = Math.round(fireblastDmg + (groundModifier * fireblastDmg));
 
         //Damage for the wizard if it is in battle him.
-        this.addDamageToWizard(Math.round(fireblastDmgAfterGround));
+        this.addDamageToWizard(fireblastDmgAfterGround);
 
         // Fireblast race modifier.
         float fireblastModifier = 0;
@@ -69,7 +69,7 @@ public class Pyromancer extends Player {
         }
 
         int fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround
-                + (fireblastModifier * fireblastDmgAfterGround));
+                + ((fireblastModifier + strategyPercent) * fireblastDmgAfterGround));
 
         //Fireblast damage is calculated and applied.
         player.setHp(player.getHp() - fireblastDmgAfterRace);
@@ -85,11 +85,11 @@ public class Pyromancer extends Player {
         float ignitePerRound = Constants.IGNITE_ROUND_BASE_DMG
                 + Constants.IGNITE_ROUND_LEVEL_DMG * this.getLevel();
 
-        float igniteDmgAfterGround = igniteDmg + (groundModifier * igniteDmg);
-        float ignitePerRoundAfterGround = ignitePerRound + (groundModifier * ignitePerRound);
+        int igniteDmgAfterGround = Math.round(igniteDmg + (groundModifier * igniteDmg));
+        int ignitePerRoundAfterGround = Math.round(ignitePerRound + (groundModifier * ignitePerRound));
 
         //Damage for the wizard if it is in battle him.
-        this.addDamageToWizard(Math.round(igniteDmgAfterGround));
+        this.addDamageToWizard(igniteDmgAfterGround);
 
         //Ignite race modifier
         float igniteModifier = 0;
@@ -107,7 +107,7 @@ public class Pyromancer extends Player {
         int igniteDmgAfterRace = Math.round(igniteDmgAfterGround
                 + (igniteModifier * igniteDmgAfterGround));
         int ignitePerRoundAfterRace = Math.round(ignitePerRoundAfterGround
-                + igniteModifier * ignitePerRoundAfterGround);
+                + (igniteModifier + strategyPercent) * ignitePerRoundAfterGround);
 
         //Ignite and Ignite per round damage is calculated and applied
         player.setHp(player.getHp() - igniteDmgAfterRace);

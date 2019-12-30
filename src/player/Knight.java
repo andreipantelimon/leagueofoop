@@ -1,14 +1,13 @@
 package player;
 
+import angel.AngelVisitor;
 import board.Ground;
 import board.GroundType;
 import main.Constants;
-import strategy.ConcreteStrategy;
-import strategy.Strategy;
 
 import static java.lang.Integer.max;
 
-public class Knight extends Player {
+public class Knight extends Player implements PlayerVisitable {
     Knight(final int id, final int xPos, final int yPos) {
         super(id, xPos, yPos);
         this.setHp(Constants.K_MAX_HP);
@@ -43,11 +42,6 @@ public class Knight extends Player {
         int kill = 0;
         boolean playerDied = false;
 
-        //TODO: Cand se aplcia strategia
-        Strategy strategy = new ConcreteStrategy();
-        strategy.applyStrategy(this);
-
-
         float executeDmg = Constants.EXECUTE_BASE_DMG
                 + Constants.EXECUTE_LEVEL_DMG * this.getLevel();
 
@@ -81,14 +75,15 @@ public class Knight extends Player {
             case "W": executeModifier = Constants.K_EXECUTE_W_MOD;
             default:
         }
-        float executeDmgAfterGround = executeDmg
-                + (groundModifier * executeDmg);
+        int executeDmgAfterGround = Math.round(executeDmg
+                + (groundModifier * executeDmg));
+
 
         //Damage for the wizard if it is in battle him.
-        this.addDamageToWizard(Math.round(executeDmgAfterGround));
+        this.addDamageToWizard(executeDmgAfterGround);
 
         int executeDmgAfterRace = Math.round(executeDmgAfterGround
-                + executeModifier * executeDmgAfterGround);
+                + (executeModifier + strategyPercent) * executeDmgAfterGround);
 
         // Final execute damage is calculated and applied.
         if (player.getHp() <= executeHpLimit) {
@@ -105,10 +100,10 @@ public class Knight extends Player {
                 + Constants.SLAM_LEVEL_DMG * this.getLevel();
         float slamModifier = 0;
 
-        float slamDmgAfterGround = slamDmg + (groundModifier * slamDmg);
+        int slamDmgAfterGround = Math.round(slamDmg + (groundModifier * slamDmg));
 
         //Damage for the wizard if it is in battle him.
-        this.addDamageToWizard(Math.round(slamDmgAfterGround));
+        this.addDamageToWizard(slamDmgAfterGround);
 
         //Slam race modifier.
         switch (player.getType()) {
@@ -122,7 +117,7 @@ public class Knight extends Player {
             default:
         }
         int slamDmgAfterRace = Math.round(slamDmgAfterGround
-                + slamModifier * slamDmgAfterGround);
+                + (slamModifier + strategyPercent) * slamDmgAfterGround);
 
         //Slam damage is calculated and applied.
         player.setHp(player.getHp() - slamDmgAfterRace);
@@ -150,5 +145,9 @@ public class Knight extends Player {
             this.setHp(Constants.K_MAX_HP
                     + Constants.K_LEVEL_HP * this.getLevel());
         }
+    }
+
+    public void acceptAngel(AngelVisitor angel) {
+        angel.visitPlayer(this);
     }
 }

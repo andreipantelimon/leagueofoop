@@ -18,6 +18,8 @@ public abstract class Player {
     private boolean isDead = false;
     private boolean isStunned = false;
     private PlayerType type = null;
+    float strategyPercent = 0f;
+    float angelPercent = 0f;
 
     Player(final int id, final int xPos, final int yPos) {
         this.id = id;
@@ -124,7 +126,7 @@ public abstract class Player {
         return this.hp;
     }
 
-    final void setHp(final int x) {
+    public final void setHp(final int x) {
         this.hp = x;
     }
 
@@ -136,7 +138,7 @@ public abstract class Player {
         return this.isDead;
     }
 
-    final int getLevel() {
+    public final int getLevel() {
         return this.level;
     }
 
@@ -193,7 +195,19 @@ public abstract class Player {
         this.damageToWizard += x;
     }
 
-    final void addXp(final int x) {
+    public final void addXp(final int x) {
         this.xp += x;
+    }
+
+    public void addStrategyPercent(float strategyPercent) {
+        this.strategyPercent += strategyPercent;
+    }
+
+    public int getXp() {
+        return this.xp;
+    }
+
+    public void addAngelPercent(float angelPercent) {
+        this.angelPercent += angelPercent;
     }
 }

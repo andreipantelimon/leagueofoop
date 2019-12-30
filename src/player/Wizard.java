@@ -54,8 +54,8 @@ public class Wizard extends Player {
         float baseHp = min(Constants.DRAIN_HP_MOD
                 * player.getMaxHp(), player.getHp());
 
-        float drainPercentAfterGround = drainPercent
-                + (groundModifier * drainPercent);
+        int drainPercentAfterGround = Math.round(drainPercent
+                + (groundModifier * drainPercent));
 
         //Drain race modifier.
         float drainModifier = 0;
@@ -70,7 +70,7 @@ public class Wizard extends Player {
             default:
         }
         float drainPercentAfterRace = drainPercentAfterGround
-                + (drainModifier * drainPercentAfterGround);
+                + ((drainModifier + strategyPercent) * drainPercentAfterGround);
 
         int drainDmg = Math.round(drainPercentAfterRace * baseHp);
 
@@ -89,8 +89,8 @@ public class Wizard extends Player {
                     + Constants.DEFLECT_LEVEL_DMG * this.getLevel();
             deflectPercent = min(deflectPercent, Constants.DEFLECT_MOD);
 
-            float deflectPercentAfterGround = deflectPercent
-                    + (groundModifier * deflectPercent);
+            int deflectPercentAfterGround = Math.round(deflectPercent
+                    + (groundModifier * deflectPercent));
 
             //Deflect race modifier.
             float deflectModifier = 0;
@@ -104,7 +104,7 @@ public class Wizard extends Player {
                 default:
             }
             float deflectPercentAfterRace = deflectPercentAfterGround
-                    + (deflectModifier * deflectPercentAfterGround);
+                    + ((deflectModifier + strategyPercent) * deflectPercentAfterGround);
             int deflectDmg = Math.round(deflectPercentAfterRace
                     * player.getDamageToWizard());
 

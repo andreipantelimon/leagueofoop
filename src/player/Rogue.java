@@ -58,9 +58,9 @@ public class Rogue extends Player {
             hitCounter++;
         }
 
-        float backstabDmgAfterCrit = backstabDmg;
+        //float backstabDmgAfterCrit = backstabDmg;
         if (crit) {
-            backstabDmgAfterCrit = Constants.ROGUE_CRIT * backstabDmg;
+            backstabDmg = Constants.ROGUE_CRIT * backstabDmg;
         }
 
         //Ground modifier.
@@ -69,10 +69,10 @@ public class Rogue extends Player {
             groundModifier = Constants.WOODS_MOD;
         }
 
-        backstabDmgAfterCrit = backstabDmgAfterCrit + (groundModifier * backstabDmgAfterCrit);
+        int backstabDmgAfterCrit = Math.round(backstabDmg + (groundModifier * backstabDmg));
 
         //Damage for the wizard if it is in battle him.
-        this.addDamageToWizard(Math.round(backstabDmgAfterCrit));
+        this.addDamageToWizard(backstabDmgAfterCrit);
 
         //Backstab race modifier.
         float backstabModifier = 0;
@@ -88,7 +88,7 @@ public class Rogue extends Player {
             default:
         }
         int backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
-                + (backstabModifier * backstabDmgAfterCrit));
+                + ((backstabModifier + strategyPercent) * backstabDmgAfterCrit));
 
         //Backstab damage is calculated and applied.
         player.setHp(player.getHp() - backstabDmgAfterRace);
@@ -102,10 +102,10 @@ public class Rogue extends Player {
                 + Constants.PARALYSIS_LEVEL_DMG * this.getLevel();
         float paralysisModifier = 0;
 
-        float paralysisDmgAfterGround = paralysisDmg + (groundModifier * paralysisDmg);
+        int paralysisDmgAfterGround = Math.round(paralysisDmg + (groundModifier * paralysisDmg));
 
         //Damage for the wizard if it is in battle him.
-        this.addDamageToWizard(Math.round(paralysisDmgAfterGround));
+        this.addDamageToWizard(paralysisDmgAfterGround);
 
         switch (player.getType()) {
             case "K": paralysisModifier = Constants.R_PARALYSIS_K_MOD;
@@ -121,7 +121,7 @@ public class Rogue extends Player {
         }
 
         int paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
-                + (paralysisModifier * paralysisDmgAfterGround));
+                + ((paralysisModifier + strategyPercent) * paralysisDmgAfterGround));
 
         int roundNumber = Constants.R_PARALYSIS_BASE_ROUND;
         if (ground.getType().equals(GroundType.Woods)) {

@@ -91,4 +91,88 @@ public final class Constants {
     public static final float DEFLECT_BASE_DMG = 0.35f;
     public static final float DEFLECT_LEVEL_DMG = 0.2f;
     public static final float DEFLECT_MOD = 0.7f;
+
+    public static final float DAMAGE_ANGEL_KNIGHT = 0.15f;
+    public static final float DAMAGE_ANGEL_PYRO = 0.2f;
+    public static final float DAMAGE_ANGEL_ROGUE = 0.3f;
+    public static final float DAMAGE_ANGEL_WIZARD = 0.4f;
+
+    public static final float LEVELUP_ANGEL_KNIGHT = 0.1f;
+    public static final float LEVELUP_ANGEL_PYRO = 0.2f;
+    public static final float LEVELUP_ANGEL_ROGUE = 0.15f;
+    public static final float LEVELUP_ANGEL_WIZARD = 0.25f;
+
+    public static float getStrategyEmpowerMin(String type) {
+        switch (type) {
+            case "K": return 1/3f;
+            case "P":
+            case "W":
+                return 1/4f;
+            case "R": return 1/7f;
+            default: return 0f;
+        }
+    }
+
+    public static float getStrategyEmpowerMax(String type) {
+        switch (type) {
+            case "K":
+            case "W":
+                return 1/2f;
+            case "P": return 1/3f;
+            case "R": return 1/5f;
+            default: return 0f;
+        }
+    }
+
+    public static float getStrategyEmpowerHp(String type) {
+        switch (type) {
+            case "K": return 1/5f;
+            case "W": return 1/10f;
+            case "P": return 1/4f;
+            case "R": return 1/7f;
+            default: return 0f;
+        }
+    }
+
+    public static float getStrategyEmpowerPercent(String type) {
+        switch (type) {
+            case "K": return 0.5f;
+            case "W": return 0.6f;
+            case "P": return 0.7f;
+            case "R": return 0.4f;
+            default: return 0f;
+        }
+    }
+
+    public static float getStrategyHealMax(String type) {
+        switch (type) {
+            case "K": return 1/3f;
+            case "W":
+            case "P":
+                return 1/4f;
+            case "R": return 1/7f;
+            default: return 0f;
+        }
+    }
+
+    public static float getStrategyHealHp(String type) {
+        switch (type) {
+            case "K": return 1/4f;
+            case "W": return 1/5f;
+            case "P": return 1/3f;
+            case "R": return 1/2f;
+            default: return 0f;
+        }
+    }
+
+    public static float getStrategyHealPercent(String type) {
+        switch (type) {
+            case "K":
+            case "W":
+                return 0.2f;
+            case "P": return 0.3f;
+            case "R": return 0.1f;
+            default: return 0f;
+        }
+    }
 }

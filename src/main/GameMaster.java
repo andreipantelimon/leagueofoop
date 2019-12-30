@@ -1,17 +1,20 @@
 package main;
 
 import angel.Angel;
+import angel.AngelFactory;
+import angel.Spawner;
 import board.Desert;
 import board.Ground;
 import board.Land;
 import board.Volcanic;
 import board.Woods;
 import player.Player;
+import strategy.ConcreteStrategy;
+import strategy.Strategy;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 //Singleton pattern.
 
@@ -30,10 +33,16 @@ final class GameMaster {
         return instance;
     }
 
-    void playTheGame(final GameInput gameInput) {
+    void playTheGame(final GameInput gameInput, final GameIOLoader gameIOLoader) throws IOException {
         initializeBoard(gameInput);
         for (int i = 0; i < gameInput.getRoundNumber(); i++) {
+            System.out.println("\n");
+            gameIOLoader.write("~~ Round " + (i+1) + " ~~");
+
             String moveData = gameInput.getRoundData().get(i);
+
+            addAngels(gameInput, i);
+
             for (Player player : playersList) {
                 player.resetDamageToWizard();
                 // Player takes over time damage and dies if necessary.
@@ -42,6 +51,7 @@ final class GameMaster {
                     player.died();
                 }
             }
+
             movePlayers(moveData);
             reinitializeGround(gameInput);
             initializePlayersOnBoard();
@@ -49,6 +59,14 @@ final class GameMaster {
             //The players fight, if one of them is Wizard he attacks second.
             for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
                 for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
+                    System.out.println("*** Angels: ");
+                    System.out.println(board[xDim][yDim].getAngelList());
+                    //TODO: Notify observers
+                    System.out.println("*** Inceput runda: ");
+                    for (Player player : playersList) {
+                        System.out.println(player);
+                    }
+
                     boolean fightOk = false;
                     if (board[xDim][yDim].getNumPlayers() == 2) {
                         Player p1 = board[xDim][yDim].getPlayer1();
@@ -70,12 +88,65 @@ final class GameMaster {
                             }
                         }
                     }
+
+                    if (board[xDim][yDim].getNumPlayers() == 2) {
+                        Player p1 = board[xDim][yDim].getPlayer1();
+                        Player p2 = board[xDim][yDim].getPlayer2();
+                        for (Angel angel : board[xDim][yDim].getAngelList()) {
+                            if (angel instanceof Spawner) {
+                                angel.visitPlayer(p1);
+                                angel.visitPlayer(p2);
+                            } else {
+                                if (!p1.isDead() && !p2.isDead()) {
+                                    angel.visitPlayer(p1);
+                                    angel.visitPlayer(p2);
+                                }
+                                if (p1.isDead() && !p2.isDead()) {
+                                    angel.visitPlayer(p2);
+                                }
+                                if (!p1.isDead() && p2.isDead()) {
+                                    angel.visitPlayer(p1);
+                                }
+                            }
+                        }
+                    }
+
+                    if (board[xDim][yDim].getNumPlayers() == 1) {
+                        Player player = null;
+                        if (board[xDim][yDim].getPlayer1() != null) {
+                            player = board[xDim][yDim].getPlayer1();
+                        } else {
+                            if (board[xDim][yDim].getPlayer2() != null) {
+                                player = board[xDim][yDim].getPlayer2();
+                            }
+                        }
+
+                        assert player != null;
+
+                        for (Angel angel : board[xDim][yDim].getAngelList()) {
+                            if (angel instanceof Spawner) {
+                                angel.visitPlayer(player);
+                            } else {
+                                if (!player.isDead()) {
+                                    angel.visitPlayer(player);
+                                }
+                            }
+                        }
+                    }
+
+                    board[xDim][yDim].getAngelList().clear();
                 }
             }
             for (Player player : playersList) {
                 if (!player.isDead()) {
                     player.levelUp();
                 }
+            }
+
+            //gameIOLoader.write("\n");
+            System.out.println("*** Final runda: ");
+            for (Player player : playersList) {
+                System.out.println(player);
             }
         }
     }
@@ -142,6 +213,8 @@ final class GameMaster {
             Player tempPlayer = playersList.get(id);
             if (!tempPlayer.isDead()) {
                 if (!tempPlayer.isStunned()) {
+                    Strategy strategy = new ConcreteStrategy();
+                    strategy.applyStrategy(tempPlayer);
                     switch (move) {
                         case 'U':
                             tempPlayer.moveUp();
@@ -167,11 +240,17 @@ final class GameMaster {
         }
     }
 
-    void addAngels(GameInput gameInput) {
-        Iterator it = gameInput.getAngelsMap().entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            System.out.println(pair.getKey() + " " + pair.getValue());
+    void addAngels(GameInput gameInput, int round) {
+        int id = 0;
+        System.out.println("Round: " + round);
+        ArrayList tempAngels = (ArrayList) gameInput.getAngelsMap().get(round);
+        for (int i = 0; i < tempAngels.size(); i++) {
+            String tempAngelString = (String) tempAngels.get(i);
+            String[] angelParts = tempAngelString.split(",", 3);
+            int tempXPos = Integer.parseInt(angelParts[1]);
+            int tempYPos = Integer.parseInt(angelParts[2]);
+            board[tempXPos][tempYPos].addAngel(AngelFactory.createAngel(id, angelParts[0], tempXPos,  tempYPos));
+            //System.out.println("Angel " + angelParts[0] + " was spawned at " + tempXPos + " " + tempYPos);
 
         }
     }
