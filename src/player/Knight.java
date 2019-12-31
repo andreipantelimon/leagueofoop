@@ -5,6 +5,8 @@ import board.Ground;
 import board.GroundType;
 import main.Constants;
 
+import java.io.IOException;
+
 import static java.lang.Integer.max;
 
 public class Knight extends Player implements PlayerVisitable {
@@ -81,9 +83,15 @@ public class Knight extends Player implements PlayerVisitable {
 
         //Damage for the wizard if it is in battle him.
         this.addDamageToWizard(executeDmgAfterGround);
+        int executeDmgAfterRace = 0;
 
-        int executeDmgAfterRace = Math.round(executeDmgAfterGround
-                + (executeModifier + strategyPercent) * executeDmgAfterGround);
+        if (executeModifier != 0) {
+            executeDmgAfterRace = Math.round(executeDmgAfterGround
+                    + (executeModifier + strategyPercent + angelPercent) * executeDmgAfterGround);
+        } else {
+            executeDmgAfterRace = Math.round(executeDmgAfterGround
+                    + (executeModifier + strategyPercent) * executeDmgAfterGround);
+        }
 
         // Final execute damage is calculated and applied.
         if (player.getHp() <= executeHpLimit) {
@@ -116,8 +124,15 @@ public class Knight extends Player implements PlayerVisitable {
             case "W": slamModifier = Constants.K_SLAM_W_MOD;
             default:
         }
-        int slamDmgAfterRace = Math.round(slamDmgAfterGround
-                + (slamModifier + strategyPercent) * slamDmgAfterGround);
+
+        int slamDmgAfterRace;
+        if (slamModifier != 0) {
+            slamDmgAfterRace = Math.round(slamDmgAfterGround
+                    + (slamModifier + strategyPercent + angelPercent) * slamDmgAfterGround);
+        } else {
+            slamDmgAfterRace = Math.round(slamDmgAfterGround
+                    + (slamModifier + strategyPercent) * slamDmgAfterGround);
+        }
 
         //Slam damage is calculated and applied.
         player.setHp(player.getHp() - slamDmgAfterRace);
@@ -131,23 +146,26 @@ public class Knight extends Player implements PlayerVisitable {
         player.stun(1);
 
         //Adds the xp if target is killed.
-        if (kill == 1) {
-            this.addXp(max(0, Constants.BASE_XP - (this.getLevel()
-                    - player.getLevel()) * Constants.LEVEL_XP));
-        }
+//        if (kill == 1) {
+//            if (!this.isDead()) {
+//                this.addXp(max(0, Constants.BASE_XP - (this.getLevel()
+//                        - player.getLevel()) * Constants.LEVEL_XP));
+//            }
+//        }
     }
 
     // Level up function.
-    public final void levelUp() {
+    public final void levelUp() throws IOException {
         int oldLevel = this.getLevel();
         super.levelUp();
         if (this.getLevel() > oldLevel) {
-            this.setHp(Constants.K_MAX_HP
+            this.setMaxHp(Constants.K_MAX_HP
                     + Constants.K_LEVEL_HP * this.getLevel());
+            this.setHp(this.getMaxHp());
         }
     }
 
-    public void acceptAngel(AngelVisitor angel) {
+    public void acceptAngel(AngelVisitor angel) throws IOException {
         angel.visitPlayer(this);
     }
 }

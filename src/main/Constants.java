@@ -102,6 +102,21 @@ public final class Constants {
     public static final float LEVELUP_ANGEL_ROGUE = 0.15f;
     public static final float LEVELUP_ANGEL_WIZARD = 0.25f;
 
+    public static final float DRACULA_KNIGHT = -0.2f;
+    public static final float DRACULA_PYRO = -0.3f;
+    public static final float DRACULA_ROGUE = -0.1f;
+    public static final float DRACULA_WIZARD = -0.4f;
+
+    public static final float SMALL_ANGEL_KNIGHT = 0.1f;
+    public static final float SMALL_ANGEL_PYRO = 0.15f;
+    public static final float SMALL_ANGEL_ROGUE = 0.05f;
+    public static final float SMALL_ANGEL_WIZARD = 0.1f;
+
+    public static final float GOOD_BOY_KNIGHT = 0.4f;
+    public static final float GOOD_BOY_PYRO = 0.5f;
+    public static final float GOOD_BOY_ROGUE = 0.4f;
+    public static final float GOOD_BOY_WIZARD = 0.3f;
+
     public static float getStrategyEmpowerMin(String type) {
         switch (type) {
             case "K": return 1/3f;
@@ -173,6 +188,76 @@ public final class Constants {
             case "P": return 0.3f;
             case "R": return 0.1f;
             default: return 0f;
+        }
+    }
+
+    public static int getLifeGiverHp(String type) {
+        switch (type) {
+            case "K": return 100;
+            case "W": return 120;
+            case "P": return 80;
+            case "R": return 90;
+            default: return 0;
+        }
+    }
+
+    public static int getDraculaHp(String type) {
+        switch (type) {
+            case "K": return 60;
+            case "W": return 20;
+            case "P": return 40;
+            case "R": return 35;
+            default: return 0;
+        }
+    }
+
+    public static int getXpAngelXp(String type) {
+        switch (type) {
+            case "K": return 45;
+            case "W": return 60;
+            case "P": return 50;
+            case "R": return 40;
+            default: return 0;
+        }
+    }
+
+    public static int getSmallAngelHp(String type) {
+        switch (type) {
+            case "K": return 10;
+            case "W": return 25;
+            case "P": return 15;
+            case "R": return 20;
+            default: return 0;
+        }
+    }
+
+    public static int getGoodBoyHp(String type) {
+        switch (type) {
+            case "K": return 20;
+            case "W": return 50;
+            case "P": return 30;
+            case "R": return 40;
+            default: return 0;
+        }
+    }
+
+    public static int getDarkAngelHp(String type) {
+        switch (type) {
+            case "K": return 40;
+            case "W": return 20;
+            case "P": return 30;
+            case "R": return 10;
+            default: return 0;
+        }
+    }
+
+    public static int getSpawnerHp(String type) {
+        switch (type) {
+            case "K": return 200;
+            case "W": return 120;
+            case "P": return 150;
+            case "R": return 180;
+            default: return 0;
         }
     }
 }

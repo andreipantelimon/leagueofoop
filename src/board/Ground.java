@@ -12,6 +12,7 @@ public abstract class Ground {
     private int numPlayers = 0;
     private GroundType type;
     private ArrayList<Angel> angelList = new ArrayList<>();
+    private ArrayList<Player> deadPlayers = new ArrayList<>();
 
     public final void setPlayer1(final Player player) {
         this.player1 = player;
@@ -53,5 +54,13 @@ public abstract class Ground {
 
     public final void addAngel(Angel angel) {
         this.angelList.add(angel);
+    }
+
+    public ArrayList<Player> getDeadPlayers() {
+        return deadPlayers;
+    }
+
+    public void addDeadPlayers(Player dead) {
+        this.deadPlayers.add(dead);
     }
 }

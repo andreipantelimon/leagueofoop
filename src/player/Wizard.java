@@ -4,6 +4,8 @@ import board.Ground;
 import board.GroundType;
 import main.Constants;
 
+import java.io.IOException;
+
 import static java.lang.Float.min;
 import static java.lang.Integer.max;
 
@@ -54,8 +56,8 @@ public class Wizard extends Player {
         float baseHp = min(Constants.DRAIN_HP_MOD
                 * player.getMaxHp(), player.getHp());
 
-        int drainPercentAfterGround = Math.round(drainPercent
-                + (groundModifier * drainPercent));
+        float drainPercentAfterGround = drainPercent
+                + (groundModifier * drainPercent);
 
         //Drain race modifier.
         float drainModifier = 0;
@@ -69,13 +71,19 @@ public class Wizard extends Player {
             case "W": drainModifier = Constants.W_DRAIN_W_MOD;
             default:
         }
-        float drainPercentAfterRace = drainPercentAfterGround
-                + ((drainModifier + strategyPercent) * drainPercentAfterGround);
+        float drainPercentAfterRace;
+        if (drainModifier != 0) {
+            drainPercentAfterRace = drainPercentAfterGround
+                    + ((drainModifier + strategyPercent + angelPercent) * drainPercentAfterGround);
+        } else {
+            drainPercentAfterRace = drainPercentAfterGround
+                    + ((drainModifier + strategyPercent) * drainPercentAfterGround);
+        }
 
         int drainDmg = Math.round(drainPercentAfterRace * baseHp);
 
         //Drain damage is calculated and applied.
-
+        System.out.println(drainDmg);
         player.setHp(player.getHp() - drainDmg);
         if (player.getHp() <= 0) {
             player.died();
@@ -89,8 +97,8 @@ public class Wizard extends Player {
                     + Constants.DEFLECT_LEVEL_DMG * this.getLevel();
             deflectPercent = min(deflectPercent, Constants.DEFLECT_MOD);
 
-            int deflectPercentAfterGround = Math.round(deflectPercent
-                    + (groundModifier * deflectPercent));
+            float deflectPercentAfterGround = deflectPercent
+                    + (groundModifier * deflectPercent);
 
             //Deflect race modifier.
             float deflectModifier = 0;
@@ -103,13 +111,19 @@ public class Wizard extends Player {
                     break;
                 default:
             }
-            float deflectPercentAfterRace = deflectPercentAfterGround
-                    + ((deflectModifier + strategyPercent) * deflectPercentAfterGround);
+            float deflectPercentAfterRace;
+            if (deflectModifier != 0) {
+                deflectPercentAfterRace = deflectPercentAfterGround
+                        + ((deflectModifier + strategyPercent + angelPercent) * deflectPercentAfterGround);
+            } else {
+                deflectPercentAfterRace = deflectPercentAfterGround
+                        + ((deflectModifier + strategyPercent) * deflectPercentAfterGround);
+            }
             int deflectDmg = Math.round(deflectPercentAfterRace
                     * player.getDamageToWizard());
 
             //Deflect damage is calculated and applied.
-
+            System.out.println(player.getDamageToWizard());
             player.setHp(player.getHp() - deflectDmg);
             if (player.getHp() <= 0 && !playerDied) {
                 player.died();
@@ -119,19 +133,22 @@ public class Wizard extends Player {
 
         player.resetDamageToWizard();
         //Xp is added if necessary.
-        if (kill == 1) {
-            this.addXp(max(0, Constants.BASE_XP
-                    - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
-        }
+//        if (kill == 1) {
+//            if (!this.isDead()) {
+//                this.addXp(max(0, Constants.BASE_XP
+//                        - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
+//            }
+//        }
     }
 
     //Level up function
-    public final void levelUp() {
+    public final void levelUp() throws IOException {
         int oldLevel = this.getLevel();
         super.levelUp();
         if (this.getLevel() > oldLevel) {
-            this.setHp(Constants.W_MAX_HP
+            this.setMaxHp(Constants.W_MAX_HP
                     + Constants.W_LEVEL_HP * this.getLevel());
+            this.setHp(this.getMaxHp());
         }
     }
 }

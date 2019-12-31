@@ -4,6 +4,8 @@ import board.Ground;
 import board.GroundType;
 import main.Constants;
 
+import java.io.IOException;
+
 import static java.lang.Integer.max;
 
 public class Rogue extends Player {
@@ -28,7 +30,7 @@ public class Rogue extends Player {
      * @param player Any player
      * @param ground Any ground
      */
-    public void accept(final Player player, final Ground ground) {
+    public void accept(final Player player, final Ground ground){
         player.fight(this, ground);
     }
 
@@ -87,8 +89,15 @@ public class Rogue extends Player {
                 break;
             default:
         }
-        int backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
-                + ((backstabModifier + strategyPercent) * backstabDmgAfterCrit));
+
+        int backstabDmgAfterRace;
+        if (backstabModifier != 0) {
+            backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
+                    + ((backstabModifier + strategyPercent + angelPercent) * backstabDmgAfterCrit));
+        } else {
+            backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
+                    + ((backstabModifier + strategyPercent) * backstabDmgAfterCrit));
+        }
 
         //Backstab damage is calculated and applied.
         player.setHp(player.getHp() - backstabDmgAfterRace);
@@ -120,8 +129,16 @@ public class Rogue extends Player {
             default:
         }
 
-        int paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
-                + ((paralysisModifier + strategyPercent) * paralysisDmgAfterGround));
+        int paralysisDmgAfterRace;
+        if (paralysisModifier != 0) {
+            paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
+                    + ((paralysisModifier + strategyPercent + angelPercent) * paralysisDmgAfterGround));
+        } else {
+            paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
+                    + ((paralysisModifier + strategyPercent) * paralysisDmgAfterGround));
+        }
+
+        System.out.println(paralysisModifier);
 
         int roundNumber = Constants.R_PARALYSIS_BASE_ROUND;
         if (ground.getType().equals(GroundType.Woods)) {
@@ -140,18 +157,22 @@ public class Rogue extends Player {
         }
 
         //Xp is added if necessary.
-        if (kill == 1) {
-            this.addXp(max(0, Constants.BASE_XP
-                    - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
-        }
+//        if (kill == 1) {
+//            if (!this.isDead()) {
+//                this.addXp(max(0, Constants.BASE_XP
+//                        - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
+//            }
+//        }
     }
 
     //Level up function.
-    public final void levelUp() {
+    public final void levelUp() throws IOException {
         int oldLevel = this.getLevel();
         super.levelUp();
         if (this.getLevel() > oldLevel) {
-            this.setHp(Constants.R_MAX_HP + Constants.R_LEVEL_HP * this.getLevel());
+            this.setMaxHp(Constants.R_MAX_HP
+                    + Constants.R_LEVEL_HP * this.getLevel());
+            this.setHp(this.getMaxHp());
         }
     }
 }

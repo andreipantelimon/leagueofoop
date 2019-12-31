@@ -8,9 +8,10 @@ import java.util.HashMap;
 
 import fileio.FileSystem;
 
-final class GameIOLoader {
+public final class GameIOLoader {
     private final String mInputPath;
-    private final String mOutputPath;
+    private static String mOutputPath;
+
 
     GameIOLoader(final String inputPath, final String outputPath) {
         mInputPath = inputPath;
@@ -69,7 +70,7 @@ final class GameIOLoader {
                 playerNumber, playerData, roundNumber, roundData, angelsMap);
     }
 
-    void write(final String string) throws IOException {
+    public static void write(final String string) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(mOutputPath, true));
         writer.write(string);
         writer.newLine();

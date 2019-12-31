@@ -4,6 +4,8 @@ import board.Ground;
 import board.GroundType;
 import main.Constants;
 
+import java.io.IOException;
+
 import static java.lang.Integer.max;
 
 public class Pyromancer extends Player {
@@ -27,7 +29,7 @@ public class Pyromancer extends Player {
      * @param player Any player
      * @param ground Any ground
      */
-    public void accept(final Player player, final Ground ground) {
+    public void accept(final Player player, final Ground ground){
         player.fight(this, ground);
     }
 
@@ -53,6 +55,7 @@ public class Pyromancer extends Player {
         int fireblastDmgAfterGround = Math.round(fireblastDmg + (groundModifier * fireblastDmg));
 
         //Damage for the wizard if it is in battle him.
+        //System.out.println(fireblastDmgAfterGround);
         this.addDamageToWizard(fireblastDmgAfterGround);
 
         // Fireblast race modifier.
@@ -68,8 +71,14 @@ public class Pyromancer extends Player {
             default:
         }
 
-        int fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround
-                + ((fireblastModifier + strategyPercent) * fireblastDmgAfterGround));
+        int fireblastDmgAfterRace;
+        if (fireblastModifier != 0) {
+            fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround
+                    + ((fireblastModifier + strategyPercent + angelPercent) * fireblastDmgAfterGround));
+        } else {
+            fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround
+                    + ((fireblastModifier + strategyPercent) * fireblastDmgAfterGround));
+        }
 
         //Fireblast damage is calculated and applied.
         player.setHp(player.getHp() - fireblastDmgAfterRace);
@@ -89,6 +98,7 @@ public class Pyromancer extends Player {
         int ignitePerRoundAfterGround = Math.round(ignitePerRound + (groundModifier * ignitePerRound));
 
         //Damage for the wizard if it is in battle him.
+        //System.out.println(igniteDmgAfterGround);
         this.addDamageToWizard(igniteDmgAfterGround);
 
         //Ignite race modifier
@@ -104,10 +114,18 @@ public class Pyromancer extends Player {
             default:
         }
 
-        int igniteDmgAfterRace = Math.round(igniteDmgAfterGround
-                + (igniteModifier * igniteDmgAfterGround));
-        int ignitePerRoundAfterRace = Math.round(ignitePerRoundAfterGround
-                + (igniteModifier + strategyPercent) * ignitePerRoundAfterGround);
+        int igniteDmgAfterRace, ignitePerRoundAfterRace;
+        if (igniteModifier != 0) {
+            igniteDmgAfterRace = Math.round(igniteDmgAfterGround
+                    + ((igniteModifier + strategyPercent + angelPercent) * igniteDmgAfterGround));
+            ignitePerRoundAfterRace = Math.round(ignitePerRoundAfterGround
+                    + (igniteModifier + strategyPercent + angelPercent) * ignitePerRoundAfterGround);
+        } else {
+            igniteDmgAfterRace = Math.round(igniteDmgAfterGround
+                    + ((igniteModifier + strategyPercent) * igniteDmgAfterGround));
+            ignitePerRoundAfterRace = Math.round(ignitePerRoundAfterGround
+                    + (igniteModifier + strategyPercent) * ignitePerRoundAfterGround);
+        }
 
         //Ignite and Ignite per round damage is calculated and applied
         player.setHp(player.getHp() - igniteDmgAfterRace);
@@ -121,18 +139,22 @@ public class Pyromancer extends Player {
         }
 
         //Adds the xp if target is killed.
-        if (kill == 1) {
-            this.addXp(max(0, Constants.BASE_XP
-                    - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
-        }
+//        if (kill == 1) {
+//            if (!this.isDead()) {
+//                this.addXp(max(0, Constants.BASE_XP
+//                        - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
+//            }
+//        }
     }
 
     //Level up function.
-    public final void levelUp() {
+    public final void levelUp() throws IOException {
         int oldLevel = this.getLevel();
         super.levelUp();
         if (this.getLevel() > oldLevel) {
-            this.setHp(Constants.P_MAX_HP + Constants.P_LEVEL_HP * this.getLevel());
+            this.setMaxHp(Constants.P_MAX_HP
+                    + Constants.P_LEVEL_HP * this.getLevel());
+            this.setHp(this.getMaxHp());
         }
     }
 }

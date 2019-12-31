@@ -2,8 +2,11 @@ package player;
 
 import board.Ground;
 import main.Constants;
+import main.GreatMagician;
 
-public abstract class Player {
+import java.io.IOException;
+
+public abstract class Player implements PlayerObservable {
     private int id;
     private int xPos;
     private int yPos;
@@ -48,10 +51,11 @@ public abstract class Player {
     /**
      * Level Up function.
      */
-    public void levelUp() {
+    public void levelUp() throws IOException {
         while (this.xp >= (Constants.LEVELUP_BASE_XP
                 + this.level * Constants.LEVELUP_LEVEL_XP)) {
             this.level++;
+            this.notifyLevelUp();
         }
     }
 
@@ -209,5 +213,15 @@ public abstract class Player {
 
     public void addAngelPercent(float angelPercent) {
         this.angelPercent += angelPercent;
+        System.out.println("--- " + this.type + " " + (this.angelPercent - 0.2f + 1f));
+    }
+
+    public final int getId() {
+        return this.id;
+    }
+
+    @Override
+    public void notifyLevelUp() throws IOException {
+        GreatMagician.getInstance().updateLevelUp(this);
     }
 }

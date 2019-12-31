@@ -3,15 +3,18 @@ package angel;
 import main.Constants;
 import player.Player;
 
+import java.io.IOException;
+
 public class LevelUpAngel extends Angel {
     public LevelUpAngel(final int id, final int xPos, final int yPos) {
         this.id = id;
         this.xPos = xPos;
         this.yPos = yPos;
+        this.type = "LevelUpAngel";
     }
 
     @Override
-    public void visitPlayer(Player player) {
+    public void visitPlayer(Player player) throws IOException {
         String type = player.getType();
         System.out.println("Player " + type + " visited by levelup Angel");
         int xpNeeded = (Constants.LEVELUP_BASE_XP
@@ -27,6 +30,7 @@ public class LevelUpAngel extends Angel {
                 break;
             case "P": player.addAngelPercent(Constants.LEVELUP_ANGEL_PYRO);
         }
-        //TODO: notify observer
+        this.notifyHelp(player);
+        player.levelUp();
     }
 }

@@ -20,7 +20,7 @@ public class ConcreteStrategy implements Strategy {
     }
 
     private void healStrategy(Player player) {
-        System.out.println("heal");
+        System.out.println("heal " + player.getType());
         player.addStrategyPercent(- Constants.getStrategyHealPercent(player.getType()));
         player.setHp(player.getHp() + (int)(player.getHp() * Constants.getStrategyHealHp(player.getType())));
     }

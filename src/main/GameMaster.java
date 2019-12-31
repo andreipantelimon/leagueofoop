@@ -14,13 +14,13 @@ import strategy.Strategy;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import static java.lang.Integer.max;
 
 //Singleton pattern.
 
-final class GameMaster {
+final class GameMaster implements GameObservable {
     private ArrayList<Player> playersList = new ArrayList<>();
-    private HashMap<Integer, Angel> angelsMap = new HashMap<>();
     private Ground[][] board;
     private static GameMaster instance = null;
 
@@ -37,7 +37,7 @@ final class GameMaster {
         initializeBoard(gameInput);
         for (int i = 0; i < gameInput.getRoundNumber(); i++) {
             System.out.println("\n");
-            gameIOLoader.write("~~ Round " + (i+1) + " ~~");
+            GameIOLoader.write("~~ Round " + (i+1) + " ~~");
 
             String moveData = gameInput.getRoundData().get(i);
 
@@ -57,15 +57,14 @@ final class GameMaster {
             initializePlayersOnBoard();
 
             //The players fight, if one of them is Wizard he attacks second.
+            System.out.println("*** Inceput runda: " + i);
+            for (Player player : playersList) {
+                System.out.println(player);
+            }
             for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
                 for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
                     System.out.println("*** Angels: ");
                     System.out.println(board[xDim][yDim].getAngelList());
-                    //TODO: Notify observers
-                    System.out.println("*** Inceput runda: ");
-                    for (Player player : playersList) {
-                        System.out.println(player);
-                    }
 
                     boolean fightOk = false;
                     if (board[xDim][yDim].getNumPlayers() == 2) {
@@ -76,64 +75,96 @@ final class GameMaster {
                                 p1.accept(p2, board[xDim][yDim]);
                                 p2.accept(p1, board[xDim][yDim]);
                                 fightOk = true;
+                                if (p2.isDead()) {
+                                    notifyDead(p1, p2);
+                                }
+                                if (p1.isDead()) {
+                                    notifyDead(p2, p1);
+                                }
                             }
                             if (p2.getType().equals("W") && !fightOk) {
                                 p2.accept(p1, board[xDim][yDim]);
                                 p1.accept(p2, board[xDim][yDim]);
                                 fightOk = true;
+                                if (p2.isDead()) {
+                                    notifyDead(p1, p2);
+                                }
+                                if (p1.isDead()) {
+                                    notifyDead(p2, p1);
+                                }
                             }
                             if (!fightOk) {
                                 p1.accept(p2, board[xDim][yDim]);
                                 p2.accept(p1, board[xDim][yDim]);
-                            }
-                        }
-                    }
-
-                    if (board[xDim][yDim].getNumPlayers() == 2) {
-                        Player p1 = board[xDim][yDim].getPlayer1();
-                        Player p2 = board[xDim][yDim].getPlayer2();
-                        for (Angel angel : board[xDim][yDim].getAngelList()) {
-                            if (angel instanceof Spawner) {
-                                angel.visitPlayer(p1);
-                                angel.visitPlayer(p2);
-                            } else {
-                                if (!p1.isDead() && !p2.isDead()) {
-                                    angel.visitPlayer(p1);
-                                    angel.visitPlayer(p2);
+                                if (p2.isDead()) {
+                                    notifyDead(p1, p2);
                                 }
+                                if (p1.isDead()) {
+                                    notifyDead(p2, p1);
+                                }
+                            }
+
+                            if (!p1.isDead() && p2.isDead()) {
+                                p1.addXp(max(0, Constants.BASE_XP - (p1.getLevel()
+                        - p2.getLevel()) * Constants.LEVEL_XP));
+                            } else {
                                 if (p1.isDead() && !p2.isDead()) {
-                                    angel.visitPlayer(p2);
-                                }
-                                if (!p1.isDead() && p2.isDead()) {
-                                    angel.visitPlayer(p1);
+                                    p2.addXp(max(0, Constants.BASE_XP - (p2.getLevel()
+                        - p1.getLevel()) * Constants.LEVEL_XP));
                                 }
                             }
                         }
                     }
 
-                    if (board[xDim][yDim].getNumPlayers() == 1) {
-                        Player player = null;
-                        if (board[xDim][yDim].getPlayer1() != null) {
-                            player = board[xDim][yDim].getPlayer1();
-                        } else {
-                            if (board[xDim][yDim].getPlayer2() != null) {
-                                player = board[xDim][yDim].getPlayer2();
-                            }
+                    for (Player player : playersList) {
+                        if (!player.isDead()) {
+                            player.levelUp();
                         }
+                    }
 
-                        assert player != null;
-
-                        for (Angel angel : board[xDim][yDim].getAngelList()) {
-                            if (angel instanceof Spawner) {
-                                angel.visitPlayer(player);
-                            } else {
-                                if (!player.isDead()) {
+                    for (Angel angel : board[xDim][yDim].getAngelList()) {
+                        if (angel.getxPos() == xDim && angel.getyPos() == yDim) {
+                            angel.notifySpawn();
+                            if (!(angel instanceof Spawner)) {
+                                if (board[xDim][yDim].getNumPlayers() == 2) {
+                                    Player p1 = board[xDim][yDim].getPlayer1();
+                                    Player p2 = board[xDim][yDim].getPlayer2();
+                                    if (!p1.isDead()) {
+                                        angel.visitPlayer(p1);
+                                    }
+                                    if (!p2.isDead()) {
+                                        angel.visitPlayer(p2);
+                                    }
+                                }
+                                if (board[xDim][yDim].getNumPlayers() == 1) {
+                                    Player player = null;
+                                    if (board[xDim][yDim].getPlayer1() != null) {
+                                        player = board[xDim][yDim].getPlayer1();
+                                    } else {
+                                        if (board[xDim][yDim].getPlayer2() != null) {
+                                            player = board[xDim][yDim].getPlayer2();
+                                        }
+                                    }
+                                    assert player != null;
                                     angel.visitPlayer(player);
                                 }
+                            } else {
+                                for (Player dead : board[xDim][yDim].getDeadPlayers()) {
+                                    angel.visitPlayer(dead);
+                                }
+                                if (board[xDim][yDim].getPlayer1() != null) {
+                                    if (board[xDim][yDim].getPlayer1().isDead()) {
+                                        angel.visitPlayer(board[xDim][yDim].getPlayer1());
+                                    }
+                                }
+                                if (board[xDim][yDim].getPlayer2() != null) {
+                                    if (board[xDim][yDim].getPlayer2().isDead()) {
+                                        angel.visitPlayer(board[xDim][yDim].getPlayer2());
+                                    }
+                                }
                             }
                         }
                     }
-
                     board[xDim][yDim].getAngelList().clear();
                 }
             }
@@ -143,11 +174,11 @@ final class GameMaster {
                 }
             }
 
-            //gameIOLoader.write("\n");
             System.out.println("*** Final runda: ");
             for (Player player : playersList) {
                 System.out.println(player);
             }
+            GameIOLoader.write("");
         }
     }
 
@@ -179,6 +210,17 @@ final class GameMaster {
     private void reinitializeGround(final GameInput gameInput) {
         for (int i = 0; i < gameInput.getXDim(); i++) {
             for (int j = 0; j < gameInput.getYDim(); j++) {
+                if (board[i][j].getPlayer1() != null) {
+                    if (board[i][j].getPlayer1().isDead()) {
+                        board[i][j].addDeadPlayers(board[i][j].getPlayer1());
+                    }
+                }
+                if (board[i][j].getPlayer2() != null) {
+                    if (board[i][j].getPlayer2().isDead()) {
+                        board[i][j].addDeadPlayers(board[i][j].getPlayer2());
+                    }
+                }
+                //System.out.println(board[i][j].getDeadPlayers());
                 board[i][j].setPlayer1(null);
                 board[i][j].setPlayer2(null);
                 board[i][j].setNumPlayers(0);
@@ -190,15 +232,17 @@ final class GameMaster {
     private void initializePlayersOnBoard() {
         for (Player player : playersList) {
             if (!player.isDead()) {
-                Ground tempGround = board[player.getxPos()][player.getyPos()];
-                if (tempGround.getNumPlayers() == 0) {
-                    board[player.getxPos()][player.getyPos()].setPlayer1(player);
-                } else {
-                    if (tempGround.getNumPlayers() == 1) {
-                        if (tempGround.getPlayer1() != null) {
-                            board[player.getxPos()][player.getyPos()].setPlayer2(player);
-                        } else {
-                            board[player.getxPos()][player.getyPos()].setPlayer1(player);
+                if (player.getxPos() >= 0 && player.getyPos() >= 0) {
+                    Ground tempGround = board[player.getxPos()][player.getyPos()];
+                    if (tempGround.getNumPlayers() == 0) {
+                        board[player.getxPos()][player.getyPos()].setPlayer1(player);
+                    } else {
+                        if (tempGround.getNumPlayers() == 1) {
+                            if (tempGround.getPlayer1() != null) {
+                                board[player.getxPos()][player.getyPos()].setPlayer2(player);
+                            } else {
+                                board[player.getxPos()][player.getyPos()].setPlayer1(player);
+                            }
                         }
                     }
                 }
@@ -242,7 +286,6 @@ final class GameMaster {
 
     void addAngels(GameInput gameInput, int round) {
         int id = 0;
-        System.out.println("Round: " + round);
         ArrayList tempAngels = (ArrayList) gameInput.getAngelsMap().get(round);
         for (int i = 0; i < tempAngels.size(); i++) {
             String tempAngelString = (String) tempAngels.get(i);
@@ -250,8 +293,6 @@ final class GameMaster {
             int tempXPos = Integer.parseInt(angelParts[1]);
             int tempYPos = Integer.parseInt(angelParts[2]);
             board[tempXPos][tempYPos].addAngel(AngelFactory.createAngel(id, angelParts[0], tempXPos,  tempYPos));
-            //System.out.println("Angel " + angelParts[0] + " was spawned at " + tempXPos + " " + tempYPos);
-
         }
     }
 
@@ -261,5 +302,10 @@ final class GameMaster {
 
     void addPlayer(final Player player) {
         playersList.add(player);
+    }
+
+    @Override
+    public void notifyDead(Player p1, Player p2) throws IOException {
+        GreatMagician.getInstance().updateDead(p1, p2);
     }
 }
