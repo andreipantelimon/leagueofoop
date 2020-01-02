@@ -89,7 +89,7 @@ public final class Constants {
     public static final float DRAIN_LEVEL_DMG = 0.05f;
     public static final float DRAIN_HP_MOD = 0.3f;
     public static final float DEFLECT_BASE_DMG = 0.35f;
-    public static final float DEFLECT_LEVEL_DMG = 0.2f;
+    public static final float DEFLECT_LEVEL_DMG = 0.02f;
     public static final float DEFLECT_MOD = 0.7f;
 
     public static final float DAMAGE_ANGEL_KNIGHT = 0.15f;

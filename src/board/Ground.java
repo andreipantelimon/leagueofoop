@@ -14,6 +14,7 @@ public abstract class Ground {
     private GroundType type;
     private ArrayList<Angel> angelList = new ArrayList<>();
     private ArrayList<Player> deadPlayers = new ArrayList<>();
+    private boolean fightCheck = false;
 
     public final void setPlayer1(final Player player) {
         this.player1 = player;
@@ -78,5 +79,13 @@ public abstract class Ground {
                 numPlayers--;
             }
         }
+    }
+
+    public boolean isFightCheck() {
+        return fightCheck;
+    }
+
+    public void setFightCheck(boolean fightCheck) {
+        this.fightCheck = fightCheck;
     }
 }

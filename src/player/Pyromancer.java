@@ -128,6 +128,8 @@ public class Pyromancer extends Player {
         //Ignite and Ignite per round damage is calculated and applied
         player.setHp(player.getHp() - igniteDmgAfterRace);
 
+        System.out.println("Pyro final dmg: " + (fireblastDmgAfterRace + igniteDmgAfterRace));
+
         //Set damage over time.
         player.setDoT(2, ignitePerRoundAfterRace);
 

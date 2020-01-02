@@ -15,8 +15,6 @@ import strategy.Strategy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import static java.lang.Integer.max;
 
@@ -46,9 +44,7 @@ public final class GameMaster implements GameObservable {
             GameIOLoader.write("~~ Round " + (i+1) + " ~~");
 
             String moveData = gameInput.getRoundData().get(i);
-            System.out.println("Aiciiii: " + angelsMap);
             addAngels(gameInput, i, angelFactory);
-            System.out.println("Aiciiii: " + angelsMap);
 
             for (Player player : playersList) {
                 player.resetDamageToWizard();
@@ -62,19 +58,26 @@ public final class GameMaster implements GameObservable {
 
             //The players fight, if one of them is Wizard he attacks second.
             System.out.println("*** Inceput runda: " + i);
-            for (Player player : playersList) {
-                System.out.println(player);
-            }
-            for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
-                for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
+//            for (Player player : playersList) {
+//                System.out.println(player);
+//            }
+            //for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
+                //for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
+            for (Player playerFight : playersList) {
+                int xDim = playerFight.getxPos();
+                int yDim = playerFight.getyPos();
+                if (xDim < 0 || yDim < 0) {
+                    continue;
+                }
                     boolean fightOk = false;
-                    if (board[xDim][yDim].getNumPlayers() == 2) {
+                    if (board[xDim][yDim].getNumPlayers() == 2 && !board[xDim][yDim].isFightCheck()) {
                         Player p1 = board[xDim][yDim].getPlayer1();
                         Player p2 = board[xDim][yDim].getPlayer2();
                         if (!p1.isDead() && !p2.isDead()) {
                             if (p1.getType().equals("W")) {
                                 p1.accept(p2, board[xDim][yDim]);
                                 p2.accept(p1, board[xDim][yDim]);
+                                board[xDim][yDim].setFightCheck(true);
                                 fightOk = true;
                                 if (p2.isDead()) {
                                     notifyDead(p1, p2);
@@ -86,6 +89,7 @@ public final class GameMaster implements GameObservable {
                             if (p2.getType().equals("W") && !fightOk) {
                                 p2.accept(p1, board[xDim][yDim]);
                                 p1.accept(p2, board[xDim][yDim]);
+                                board[xDim][yDim].setFightCheck(true);
                                 fightOk = true;
                                 if (p2.isDead()) {
                                     notifyDead(p1, p2);
@@ -97,6 +101,7 @@ public final class GameMaster implements GameObservable {
                             if (!fightOk) {
                                 p1.accept(p2, board[xDim][yDim]);
                                 p2.accept(p1, board[xDim][yDim]);
+                                board[xDim][yDim].setFightCheck(true);
                                 if (p2.isDead()) {
                                     notifyDead(p1, p2);
                                 }
@@ -123,7 +128,7 @@ public final class GameMaster implements GameObservable {
                         }
                     }
                 }
-            }
+            //}
             ArrayList<Angel> angelsListToIterate = angelsMap.get(i);
             for (Angel angel : angelsListToIterate) {
                 angel.notifySpawn();
@@ -168,9 +173,17 @@ public final class GameMaster implements GameObservable {
 
             System.out.println("*** Final runda: ");
             for (Player player : playersList) {
-                System.out.println(player);
+                if (player.getId() == 35 || player.getId() == 44) {
+                    System.out.println(player);
+                }
             }
             GameIOLoader.write("");
+
+            for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
+                for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
+                    board[xDim][yDim].setFightCheck(false);
+                }
+            }
         }
     }
 
@@ -224,9 +237,19 @@ public final class GameMaster implements GameObservable {
                         board[player.getxPos()][player.getyPos()].setPlayer1(player);
                     } else {
                         if (tempGround.getNumPlayers() == 1) {
+                            boolean ok = true;
                             if (tempGround.getPlayer1() != null) {
                                 if (!tempGround.getPlayer1().isDead() && !tempGround.getPlayer1().equals(player)) {
                                     board[player.getxPos()][player.getyPos()].setPlayer2(player);
+                                } else {
+                                    if (tempGround.getPlayer2() != null) {
+                                        if (tempGround.getPlayer2().equals(player)) {
+                                            ok = false;
+                                        }
+                                    }
+                                    if (tempGround.getPlayer1().isDead() && !tempGround.getPlayer1().equals(player) && ok) {
+                                        board[player.getxPos()][player.getyPos()].setPlayer1(player);
+                                    }
                                 }
                             } else {
                                 if (!tempGround.getPlayer2().equals(player)) {
@@ -253,19 +276,27 @@ public final class GameMaster implements GameObservable {
                     int oldYPos = tempPlayer.getyPos();
                     switch (move) {
                         case 'U':
-                            board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            if (oldXPos >= 0 && oldYPos >= 0) {
+                                board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            }
                             tempPlayer.moveUp();
                             break;
                         case 'D':
-                            board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            if (oldXPos >= 0 && oldYPos >= 0) {
+                                board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            }
                             tempPlayer.moveDown();
                             break;
                         case 'L':
-                            board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            if (oldXPos >= 0 && oldYPos >= 0) {
+                                board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            }
                             tempPlayer.moveLeft();
                             break;
                         case 'R':
-                            board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            if (oldXPos >= 0 && oldYPos >= 0) {
+                                board[oldXPos][oldYPos].removePlayer(tempPlayer);
+                            }
                             tempPlayer.moveRight();
                             break;
                         default:

@@ -79,6 +79,7 @@ public class Knight extends Player {
         }
         int executeDmgAfterGround = Math.round(executeDmg
                 + (groundModifier * executeDmg));
+        System.out.println("******* " + player);
 
 
         //Damage for the wizard if it is in battle him.
@@ -144,14 +145,6 @@ public class Knight extends Player {
 
         // Player is stunned.
         player.stun(1);
-
-        //Adds the xp if target is killed.
-//        if (kill == 1) {
-//            if (!this.isDead()) {
-//                this.addXp(max(0, Constants.BASE_XP - (this.getLevel()
-//                        - player.getLevel()) * Constants.LEVEL_XP));
-//            }
-//        }
     }
 
     // Level up function.

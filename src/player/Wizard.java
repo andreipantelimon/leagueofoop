@@ -80,9 +80,9 @@ public class Wizard extends Player {
         }
 
         int drainDmg = Math.round(drainPercentAfterRace * baseHp);
+        //System.out.println("Drain dmg: " + drainDmg);
 
         //Drain damage is calculated and applied.
-        //System.out.println(drainDmg);
         player.setHp(player.getHp() - drainDmg);
         if (player.getHp() <= 0) {
             player.died(ground);
@@ -120,11 +120,11 @@ public class Wizard extends Player {
                     * player.getDamageToWizard());
 
             //Deflect damage is calculated and applied.
-            System.out.println(player.getDamageToWizard());
             player.setHp(player.getHp() - deflectDmg);
             if (player.getHp() <= 0 && !player.isDead()) {
                 player.died(ground);
             }
+            //System.out.println("Deflect: " + deflectDmg);
         }
 
         player.resetDamageToWizard();
