@@ -1,5 +1,6 @@
 package player;
 
+import angel.AngelVisitor;
 import board.Ground;
 import board.GroundType;
 import main.Constants;
@@ -42,8 +43,6 @@ public class Wizard extends Player {
      */
     @Override
     final void fight(final Player player, final Ground ground) {
-        int kill = 0;
-        boolean playerDied = false;
 
         //Ground modifier.
         float groundModifier = 0;
@@ -83,12 +82,10 @@ public class Wizard extends Player {
         int drainDmg = Math.round(drainPercentAfterRace * baseHp);
 
         //Drain damage is calculated and applied.
-        System.out.println(drainDmg);
+        //System.out.println(drainDmg);
         player.setHp(player.getHp() - drainDmg);
         if (player.getHp() <= 0) {
-            player.died();
-            kill = 1;
-            playerDied = true;
+            player.died(ground);
         }
 
         //If the fighting player is Wizard, it skips him
@@ -125,20 +122,12 @@ public class Wizard extends Player {
             //Deflect damage is calculated and applied.
             System.out.println(player.getDamageToWizard());
             player.setHp(player.getHp() - deflectDmg);
-            if (player.getHp() <= 0 && !playerDied) {
-                player.died();
-                kill = 1;
+            if (player.getHp() <= 0 && !player.isDead()) {
+                player.died(ground);
             }
         }
 
         player.resetDamageToWizard();
-        //Xp is added if necessary.
-//        if (kill == 1) {
-//            if (!this.isDead()) {
-//                this.addXp(max(0, Constants.BASE_XP
-//                        - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
-//            }
-//        }
     }
 
     //Level up function
@@ -150,5 +139,10 @@ public class Wizard extends Player {
                     + Constants.W_LEVEL_HP * this.getLevel());
             this.setHp(this.getMaxHp());
         }
+    }
+
+    @Override
+    public void acceptAngel(AngelVisitor angel) throws IOException {
+        angel.visitPlayer(this);
     }
 }

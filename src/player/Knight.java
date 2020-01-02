@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static java.lang.Integer.max;
 
-public class Knight extends Player implements PlayerVisitable {
+public class Knight extends Player {
     Knight(final int id, final int xPos, final int yPos) {
         super(id, xPos, yPos);
         this.setHp(Constants.K_MAX_HP);
@@ -97,7 +97,7 @@ public class Knight extends Player implements PlayerVisitable {
         if (player.getHp() <= executeHpLimit) {
             int executeDmgAll = player.getHp();
             player.setHp(player.getHp() - executeDmgAll);
-            player.died();
+            player.died(ground);
             kill = 1;
             playerDied = true;
         } else {
@@ -138,7 +138,7 @@ public class Knight extends Player implements PlayerVisitable {
         player.setHp(player.getHp() - slamDmgAfterRace);
         player.setDoT(0, 0);
         if (player.getHp() <= 0 && !playerDied) {
-            player.died();
+            player.died(ground);
             kill = 1;
         }
 

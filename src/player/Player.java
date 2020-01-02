@@ -2,11 +2,13 @@ package player;
 
 import board.Ground;
 import main.Constants;
+import main.GameMaster;
 import main.GreatMagician;
 
 import java.io.IOException;
+import java.util.Objects;
 
-public abstract class Player implements PlayerObservable {
+public abstract class Player implements PlayerObservable, PlayerVisitable {
     private int id;
     private int xPos;
     private int yPos;
@@ -95,8 +97,8 @@ public abstract class Player implements PlayerObservable {
 
     public final void moveLeft() {
         if (!isDead) {
-            this.yPos--;
-        }
+                this.yPos--;
+            }
     }
 
     public final void moveRight() {
@@ -134,8 +136,15 @@ public abstract class Player implements PlayerObservable {
         this.hp = x;
     }
 
-    public final void died() {
+    public final void died(Ground board) {
         this.isDead = true;
+        board.setNumPlayers(board.getNumPlayers() - 1);
+        board.addDeadPlayers(this);
+    }
+
+    public final void alive() {
+        this.isDead = false;
+        GameMaster.getInstance().getBoard()[this.xPos][this.yPos].setNumPlayers(GameMaster.getInstance().getBoard()[this.xPos][this.yPos].getNumPlayers() + 1);
     }
 
     public final boolean isDead() {
@@ -213,7 +222,6 @@ public abstract class Player implements PlayerObservable {
 
     public void addAngelPercent(float angelPercent) {
         this.angelPercent += angelPercent;
-        System.out.println("--- " + this.type + " " + (this.angelPercent - 0.2f + 1f));
     }
 
     public final int getId() {
@@ -223,5 +231,25 @@ public abstract class Player implements PlayerObservable {
     @Override
     public void notifyLevelUp() throws IOException {
         GreatMagician.getInstance().updateLevelUp(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return id == player.id &&
+                xPos == player.xPos &&
+                yPos == player.yPos &&
+                hp == player.hp &&
+                maxHp == player.maxHp &&
+                xp == player.xp &&
+                level == player.level &&
+                isDead == player.isDead;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, xPos, yPos, hp, maxHp, xp, level, isDead);
     }
 }

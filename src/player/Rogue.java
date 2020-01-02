@@ -1,5 +1,6 @@
 package player;
 
+import angel.AngelVisitor;
 import board.Ground;
 import board.GroundType;
 import main.Constants;
@@ -92,6 +93,7 @@ public class Rogue extends Player {
 
         int backstabDmgAfterRace;
         if (backstabModifier != 0) {
+            backstabModifier -= 0.0001f;
             backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
                     + ((backstabModifier + strategyPercent + angelPercent) * backstabDmgAfterCrit));
         } else {
@@ -102,7 +104,7 @@ public class Rogue extends Player {
         //Backstab damage is calculated and applied.
         player.setHp(player.getHp() - backstabDmgAfterRace);
         if (player.getHp() <= 0) {
-            player.died();
+            player.died(ground);
             kill = 1;
             playerDied = true;
         }
@@ -131,6 +133,7 @@ public class Rogue extends Player {
 
         int paralysisDmgAfterRace;
         if (paralysisModifier != 0) {
+            paralysisModifier -= 0.0001f;
             paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
                     + ((paralysisModifier + strategyPercent + angelPercent) * paralysisDmgAfterGround));
         } else {
@@ -138,7 +141,7 @@ public class Rogue extends Player {
                     + ((paralysisModifier + strategyPercent) * paralysisDmgAfterGround));
         }
 
-        System.out.println(paralysisModifier);
+        //System.out.println(paralysisModifier);
 
         int roundNumber = Constants.R_PARALYSIS_BASE_ROUND;
         if (ground.getType().equals(GroundType.Woods)) {
@@ -152,7 +155,7 @@ public class Rogue extends Player {
         player.setHp(player.getHp() - paralysisDmgAfterRace);
 
         if (player.getHp() <= 0 && !playerDied) {
-            player.died();
+            player.died(ground);
             kill = 1;
         }
 
@@ -174,5 +177,10 @@ public class Rogue extends Player {
                     + Constants.R_LEVEL_HP * this.getLevel());
             this.setHp(this.getMaxHp());
         }
+    }
+
+    @Override
+    public void acceptAngel(AngelVisitor angel) throws IOException {
+        angel.visitPlayer(this);
     }
 }

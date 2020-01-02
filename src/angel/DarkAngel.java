@@ -1,6 +1,7 @@
 package angel;
 
 import main.Constants;
+import main.GameMaster;
 import player.Player;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class DarkAngel extends Angel {
         player.setHp(player.getHp() - lifeToSteal);
         this.notifyHit(player);
         if (player.getHp() <= 0) {
-            player.died();
+            player.died(GameMaster.getInstance().getBoard()[player.getxPos()][player.getyPos()]);
             this.notifyKill(player);
         }
     }

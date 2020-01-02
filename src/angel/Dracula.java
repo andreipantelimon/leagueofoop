@@ -1,6 +1,7 @@
 package angel;
 
 import main.Constants;
+import main.GameMaster;
 import player.Player;
 
 import java.io.IOException;
@@ -29,10 +30,9 @@ public class Dracula extends Angel {
                 break;
             case "P": player.addAngelPercent(Constants.DRACULA_PYRO);
         }
-        //TODO: notify observer
         this.notifyHit(player);
         if (player.getHp() <= 0) {
-            player.died();
+            player.died(GameMaster.getInstance().getBoard()[player.getxPos()][player.getyPos()]);
             this.notifyKill(player);
         }
     }

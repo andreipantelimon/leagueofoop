@@ -1,5 +1,6 @@
 package player;
 
+import angel.AngelVisitor;
 import board.Ground;
 import board.GroundType;
 import main.Constants;
@@ -40,8 +41,6 @@ public class Pyromancer extends Player {
      */
     @Override
     final void fight(final Player player, final Ground ground) {
-        int kill = 0;
-        boolean playerDied = false;
 
         // Ground modifier
         float groundModifier = 0;
@@ -73,6 +72,7 @@ public class Pyromancer extends Player {
 
         int fireblastDmgAfterRace;
         if (fireblastModifier != 0) {
+            fireblastModifier -= 0.0001f;
             fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround
                     + ((fireblastModifier + strategyPercent + angelPercent) * fireblastDmgAfterGround));
         } else {
@@ -84,9 +84,7 @@ public class Pyromancer extends Player {
         player.setHp(player.getHp() - fireblastDmgAfterRace);
 
         if (player.getHp() <= 0) {
-            player.died();
-            kill = 1;
-            playerDied = true;
+            player.died(ground);
         }
 
         float igniteDmg = Constants.IGNITE_BASE_DMG
@@ -133,18 +131,9 @@ public class Pyromancer extends Player {
         //Set damage over time.
         player.setDoT(2, ignitePerRoundAfterRace);
 
-        if (player.getHp() <= 0 && !playerDied) {
-            player.died();
-            kill = 1;
+        if (player.getHp() <= 0 && !player.isDead()) {
+            player.died(ground);
         }
-
-        //Adds the xp if target is killed.
-//        if (kill == 1) {
-//            if (!this.isDead()) {
-//                this.addXp(max(0, Constants.BASE_XP
-//                        - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
-//            }
-//        }
     }
 
     //Level up function.
@@ -156,5 +145,10 @@ public class Pyromancer extends Player {
                     + Constants.P_LEVEL_HP * this.getLevel());
             this.setHp(this.getMaxHp());
         }
+    }
+
+    @Override
+    public void acceptAngel(AngelVisitor angel) throws IOException {
+        angel.visitPlayer(this);
     }
 }

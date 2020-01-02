@@ -1,5 +1,6 @@
 package angel;
 
+import main.GameMaster;
 import player.Player;
 
 import java.io.IOException;
@@ -14,10 +15,11 @@ public class TheDoomer extends Angel {
 
     @Override
     public void visitPlayer(Player player) throws IOException {
-        System.out.println("Player visited by the doomer");
-        player.setDead(true);
-        //TODO: notify observer
-        this.notifyHit(player);
-        this.notifyKill(player);
+        if (!player.isDead()) {
+            System.out.println("Player visited by the doomer");
+            player.died(GameMaster.getInstance().getBoard()[player.getxPos()][player.getyPos()]);
+            this.notifyHit(player);
+            this.notifyKill(player);
+        }
     }
 }

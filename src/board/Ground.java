@@ -4,6 +4,7 @@ import angel.Angel;
 import player.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public abstract class Ground {
     // Class that keeps 2 players that will fight and ground type.
@@ -62,5 +63,20 @@ public abstract class Ground {
 
     public void addDeadPlayers(Player dead) {
         this.deadPlayers.add(dead);
+    }
+
+    public final void removePlayer(Player player) {
+        if (player1 != null) {
+            if (player1.equals(player)) {
+                player1 = null;
+                numPlayers--;
+            }
+        }
+        if (player2 != null){
+            if (player2.equals(player)) {
+                player2 = null;
+                numPlayers--;
+            }
+        }
     }
 }

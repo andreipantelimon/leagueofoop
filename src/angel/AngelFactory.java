@@ -1,10 +1,11 @@
 package angel;
 
+import main.GreatMagician;
+
 public class AngelFactory {
+    public AngelFactory(){ }
 
-    private AngelFactory(){ }
-
-    public static Angel createAngel(final int id, final String type, final int xPos, final int yPos) {
+    public Angel createAngel(final int id, final String type, final int xPos, final int yPos) {
         switch (type) {
             case "DamageAngel": return new DamageAngel(id, xPos, yPos);
             case "DarkAngel": return new DarkAngel(id, xPos, yPos);

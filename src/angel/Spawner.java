@@ -19,11 +19,10 @@ public class Spawner extends Angel {
         System.out.println("Player " + type + " visited by spawner");
 
         if (player.isDead()) {
-            player.setDead(false);
+            player.alive();
             player.setHp(Constants.getSpawnerHp(type));
             this.notifyHelp(player);
             this.notifyRespawn(player);
         }
-        //TODO: notify observer
     }
 }

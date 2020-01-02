@@ -14,7 +14,7 @@ public class ConcreteStrategy implements Strategy {
         }
     }
     private void empowerStrategy(Player player) {
-        System.out.println("empower");
+        System.out.println("empower " + player.getType());
         player.setHp(player.getHp() - (int)(player.getHp() * Constants.getStrategyEmpowerHp(player.getType())));
         player.addStrategyPercent(Constants.getStrategyEmpowerPercent(player.getType()));
     }
