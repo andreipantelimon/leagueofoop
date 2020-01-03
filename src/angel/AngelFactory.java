@@ -1,11 +1,11 @@
 package angel;
 
-import main.GreatMagician;
-
+//Factory pattern for Angels.
 public class AngelFactory {
-    public AngelFactory(){ }
+    public AngelFactory() { }
 
-    public Angel createAngel(final int id, final String type, final int xPos, final int yPos) {
+    public final Angel createAngel(final int id, final String type,
+                                   final int xPos, final int yPos) {
         switch (type) {
             case "DamageAngel": return new DamageAngel(id, xPos, yPos);
             case "DarkAngel": return new DarkAngel(id, xPos, yPos);

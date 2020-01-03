@@ -8,17 +8,20 @@ import java.io.IOException;
 
 public class DarkAngel extends Angel {
     public DarkAngel(final int id, final int xPos, final int yPos) {
-        this.id = id;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.type = "DarkAngel";
+        this.setId(id);
+        this.setxPos(xPos);
+        this.setyPos(yPos);
+        this.setType("DarkAngel");
     }
 
+    /**
+     * Visit method for Dark Angel.
+     * @param player
+     * @throws IOException
+     */
     @Override
-    public void visitPlayer(Player player) throws IOException {
+    public void visitPlayer(final Player player) throws IOException {
         String type = player.getType();
-        System.out.println("Player " + type + " visited by dark angel");
-
         int lifeToSteal = Constants.getDarkAngelHp(type);
         player.setHp(player.getHp() - lifeToSteal);
         this.notifyHit(player);

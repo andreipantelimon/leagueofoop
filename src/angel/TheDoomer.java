@@ -7,16 +7,20 @@ import java.io.IOException;
 
 public class TheDoomer extends Angel {
     public TheDoomer(final int id, final int xPos, final int yPos) {
-        this.id = id;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.type = "TheDoomer";
+        this.setId(id);
+        this.setxPos(xPos);
+        this.setyPos(yPos);
+        this.setType("TheDoomer");
     }
 
+    /**
+     * Visit method for TheDoomer Angel.
+     * @param player
+     * @throws IOException
+     */
     @Override
-    public void visitPlayer(Player player) throws IOException {
+    public void visitPlayer(final Player player) throws IOException {
         if (!player.isDead()) {
-            System.out.println("Player visited by the doomer");
             player.died(GameMaster.getInstance().getBoard()[player.getxPos()][player.getyPos()]);
             this.notifyHit(player);
             this.notifyKill(player);

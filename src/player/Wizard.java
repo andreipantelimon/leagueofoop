@@ -8,7 +8,6 @@ import main.Constants;
 import java.io.IOException;
 
 import static java.lang.Float.min;
-import static java.lang.Integer.max;
 
 public class Wizard extends Player {
     Wizard(final int id, final int xPos, final int yPos) {
@@ -73,14 +72,14 @@ public class Wizard extends Player {
         float drainPercentAfterRace;
         if (drainModifier != 0) {
             drainPercentAfterRace = drainPercentAfterGround
-                    + ((drainModifier + strategyPercent + angelPercent) * drainPercentAfterGround);
+                    + ((drainModifier + getStrategyPercent()
+                    + getAngelPercent()) * drainPercentAfterGround);
         } else {
             drainPercentAfterRace = drainPercentAfterGround
-                    + ((drainModifier + strategyPercent) * drainPercentAfterGround);
+                    + ((drainModifier + getStrategyPercent()) * drainPercentAfterGround);
         }
 
         int drainDmg = Math.round(drainPercentAfterRace * baseHp);
-        //System.out.println("Drain dmg: " + drainDmg);
 
         //Drain damage is calculated and applied.
         player.setHp(player.getHp() - drainDmg);
@@ -111,10 +110,11 @@ public class Wizard extends Player {
             float deflectPercentAfterRace;
             if (deflectModifier != 0) {
                 deflectPercentAfterRace = deflectPercentAfterGround
-                        + ((deflectModifier + strategyPercent + angelPercent) * deflectPercentAfterGround);
+                        + ((deflectModifier + getStrategyPercent() + getAngelPercent())
+                        * deflectPercentAfterGround);
             } else {
                 deflectPercentAfterRace = deflectPercentAfterGround
-                        + ((deflectModifier + strategyPercent) * deflectPercentAfterGround);
+                        + ((deflectModifier + getStrategyPercent()) * deflectPercentAfterGround);
             }
             int deflectDmg = Math.round(deflectPercentAfterRace
                     * player.getDamageToWizard());
@@ -124,7 +124,6 @@ public class Wizard extends Player {
             if (player.getHp() <= 0 && !player.isDead()) {
                 player.died(ground);
             }
-            //System.out.println("Deflect: " + deflectDmg);
         }
 
         player.resetDamageToWizard();
@@ -142,7 +141,7 @@ public class Wizard extends Player {
     }
 
     @Override
-    public void acceptAngel(AngelVisitor angel) throws IOException {
+    public final void acceptAngel(final AngelVisitor angel) throws IOException {
         angel.visitPlayer(this);
     }
 }

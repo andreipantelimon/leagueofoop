@@ -7,17 +7,20 @@ import java.io.IOException;
 
 public class GoodBoy extends Angel {
     public GoodBoy(final int id, final int xPos, final int yPos) {
-        this.id = id;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.type = "GoodBoy";
+        this.setId(id);
+        this.setxPos(xPos);
+        this.setyPos(yPos);
+        this.setType("GoodBoy");
     }
 
+    /**
+     * Visit method for GoodBoy Angel.
+     * @param player
+     * @throws IOException
+     */
     @Override
-    public void visitPlayer(Player player) throws IOException {
+    public void visitPlayer(final Player player) throws IOException {
         String type = player.getType();
-        System.out.println("Player " + type + " visited by good boy");
-
         switch (type) {
             case "K": player.addAngelPercent(Constants.GOOD_BOY_KNIGHT);
                 break;
@@ -26,6 +29,7 @@ public class GoodBoy extends Angel {
             case "R": player.addAngelPercent(Constants.GOOD_BOY_ROGUE);
                 break;
             case "P": player.addAngelPercent(Constants.GOOD_BOY_PYRO);
+            default:
         }
 
         if (player.getHp() + Constants.getGoodBoyHp(type) > player.getMaxHp()) {

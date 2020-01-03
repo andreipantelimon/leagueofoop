@@ -7,8 +7,6 @@ import main.Constants;
 
 import java.io.IOException;
 
-import static java.lang.Integer.max;
-
 public class Rogue extends Player {
     private int hitCounter = 2;
     Rogue(final int id, final int xPos, final int yPos) {
@@ -31,7 +29,7 @@ public class Rogue extends Player {
      * @param player Any player
      * @param ground Any ground
      */
-    public void accept(final Player player, final Ground ground){
+    public void accept(final Player player, final Ground ground) {
         player.fight(this, ground);
     }
 
@@ -42,7 +40,6 @@ public class Rogue extends Player {
      */
     @Override
     final void fight(final Player player, final Ground ground) {
-        int kill = 0;
         boolean crit = false;
         boolean playerDied = false;
 
@@ -61,7 +58,6 @@ public class Rogue extends Player {
             hitCounter++;
         }
 
-        //float backstabDmgAfterCrit = backstabDmg;
         if (crit) {
             backstabDmg = Constants.ROGUE_CRIT * backstabDmg;
         }
@@ -93,19 +89,19 @@ public class Rogue extends Player {
 
         int backstabDmgAfterRace;
         if (backstabModifier != 0) {
-            backstabModifier -= 0.0001f;
+            backstabModifier -= Constants.FLOAT_ERROR;
             backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
-                    + ((backstabModifier + strategyPercent + angelPercent) * backstabDmgAfterCrit));
+                    + ((backstabModifier + getStrategyPercent()
+                    + getAngelPercent()) * backstabDmgAfterCrit));
         } else {
             backstabDmgAfterRace = Math.round(backstabDmgAfterCrit
-                    + ((backstabModifier + strategyPercent) * backstabDmgAfterCrit));
+                    + ((backstabModifier + getStrategyPercent()) * backstabDmgAfterCrit));
         }
 
         //Backstab damage is calculated and applied.
         player.setHp(player.getHp() - backstabDmgAfterRace);
         if (player.getHp() <= 0) {
             player.died(ground);
-            kill = 1;
             playerDied = true;
         }
 
@@ -133,15 +129,14 @@ public class Rogue extends Player {
 
         int paralysisDmgAfterRace;
         if (paralysisModifier != 0) {
-            paralysisModifier -= 0.0001f;
+            paralysisModifier -= Constants.FLOAT_ERROR;
             paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
-                    + ((paralysisModifier + strategyPercent + angelPercent) * paralysisDmgAfterGround));
+                    + ((paralysisModifier + getStrategyPercent() + getAngelPercent())
+                    * paralysisDmgAfterGround));
         } else {
             paralysisDmgAfterRace = Math.round(paralysisDmgAfterGround
-                    + ((paralysisModifier + strategyPercent) * paralysisDmgAfterGround));
+                    + ((paralysisModifier + getStrategyPercent()) * paralysisDmgAfterGround));
         }
-
-        //System.out.println(paralysisModifier);
 
         int roundNumber = Constants.R_PARALYSIS_BASE_ROUND;
         if (ground.getType().equals(GroundType.Woods)) {
@@ -156,16 +151,7 @@ public class Rogue extends Player {
 
         if (player.getHp() <= 0 && !playerDied) {
             player.died(ground);
-            kill = 1;
         }
-
-        //Xp is added if necessary.
-//        if (kill == 1) {
-//            if (!this.isDead()) {
-//                this.addXp(max(0, Constants.BASE_XP
-//                        - (this.getLevel() - player.getLevel()) * Constants.LEVEL_XP));
-//            }
-//        }
     }
 
     //Level up function.
@@ -180,7 +166,7 @@ public class Rogue extends Player {
     }
 
     @Override
-    public void acceptAngel(AngelVisitor angel) throws IOException {
+    public final void acceptAngel(final AngelVisitor angel) throws IOException {
         angel.visitPlayer(this);
     }
 }

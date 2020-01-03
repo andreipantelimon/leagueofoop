@@ -7,8 +7,6 @@ import main.Constants;
 
 import java.io.IOException;
 
-import static java.lang.Integer.max;
-
 public class Pyromancer extends Player {
     Pyromancer(final int id, final int xPos, final int yPos) {
         super(id, xPos, yPos);
@@ -30,7 +28,7 @@ public class Pyromancer extends Player {
      * @param player Any player
      * @param ground Any ground
      */
-    public void accept(final Player player, final Ground ground){
+    public void accept(final Player player, final Ground ground) {
         player.fight(this, ground);
     }
 
@@ -54,7 +52,6 @@ public class Pyromancer extends Player {
         int fireblastDmgAfterGround = Math.round(fireblastDmg + (groundModifier * fireblastDmg));
 
         //Damage for the wizard if it is in battle him.
-        //System.out.println(fireblastDmgAfterGround);
         this.addDamageToWizard(fireblastDmgAfterGround);
 
         // Fireblast race modifier.
@@ -72,12 +69,13 @@ public class Pyromancer extends Player {
 
         int fireblastDmgAfterRace;
         if (fireblastModifier != 0) {
-            fireblastModifier -= 0.0001f;
+            fireblastModifier -= Constants.FLOAT_ERROR;
             fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround
-                    + ((fireblastModifier + strategyPercent + angelPercent) * fireblastDmgAfterGround));
+                    + ((fireblastModifier + getStrategyPercent() + getAngelPercent())
+                    * fireblastDmgAfterGround));
         } else {
             fireblastDmgAfterRace = Math.round(fireblastDmgAfterGround
-                    + ((fireblastModifier + strategyPercent) * fireblastDmgAfterGround));
+                    + ((fireblastModifier + getStrategyPercent()) * fireblastDmgAfterGround));
         }
 
         //Fireblast damage is calculated and applied.
@@ -93,10 +91,10 @@ public class Pyromancer extends Player {
                 + Constants.IGNITE_ROUND_LEVEL_DMG * this.getLevel();
 
         int igniteDmgAfterGround = Math.round(igniteDmg + (groundModifier * igniteDmg));
-        int ignitePerRoundAfterGround = Math.round(ignitePerRound + (groundModifier * ignitePerRound));
+        int ignitePerRoundAfterGround = Math.round(ignitePerRound
+                + (groundModifier * ignitePerRound));
 
         //Damage for the wizard if it is in battle him.
-        //System.out.println(igniteDmgAfterGround);
         this.addDamageToWizard(igniteDmgAfterGround);
 
         //Ignite race modifier
@@ -115,20 +113,20 @@ public class Pyromancer extends Player {
         int igniteDmgAfterRace, ignitePerRoundAfterRace;
         if (igniteModifier != 0) {
             igniteDmgAfterRace = Math.round(igniteDmgAfterGround
-                    + ((igniteModifier + strategyPercent + angelPercent) * igniteDmgAfterGround));
+                    + ((igniteModifier + getStrategyPercent()
+                    + getAngelPercent()) * igniteDmgAfterGround));
             ignitePerRoundAfterRace = Math.round(ignitePerRoundAfterGround
-                    + (igniteModifier + strategyPercent + angelPercent) * ignitePerRoundAfterGround);
+                    + (igniteModifier + getStrategyPercent() + getAngelPercent())
+                    * ignitePerRoundAfterGround);
         } else {
             igniteDmgAfterRace = Math.round(igniteDmgAfterGround
-                    + ((igniteModifier + strategyPercent) * igniteDmgAfterGround));
+                    + ((igniteModifier + getStrategyPercent()) * igniteDmgAfterGround));
             ignitePerRoundAfterRace = Math.round(ignitePerRoundAfterGround
-                    + (igniteModifier + strategyPercent) * ignitePerRoundAfterGround);
+                    + (igniteModifier + getStrategyPercent()) * ignitePerRoundAfterGround);
         }
 
         //Ignite and Ignite per round damage is calculated and applied
         player.setHp(player.getHp() - igniteDmgAfterRace);
-
-        System.out.println("Pyro final dmg: " + (fireblastDmgAfterRace + igniteDmgAfterRace));
 
         //Set damage over time.
         player.setDoT(2, ignitePerRoundAfterRace);
@@ -150,7 +148,7 @@ public class Pyromancer extends Player {
     }
 
     @Override
-    public void acceptAngel(AngelVisitor angel) throws IOException {
+    public final void acceptAngel(final AngelVisitor angel) throws IOException {
         angel.visitPlayer(this);
     }
 }

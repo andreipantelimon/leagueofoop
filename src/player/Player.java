@@ -23,8 +23,8 @@ public abstract class Player implements PlayerObservable, PlayerVisitable {
     private boolean isDead = false;
     private boolean isStunned = false;
     private PlayerType type = null;
-    float strategyPercent = 0f;
-    float angelPercent = 0f;
+    private float strategyPercent = 0f;
+    private float angelPercent = 0f;
 
     Player(final int id, final int xPos, final int yPos) {
         this.id = id;
@@ -136,7 +136,7 @@ public abstract class Player implements PlayerObservable, PlayerVisitable {
         this.hp = x;
     }
 
-    public final void died(Ground board) {
+    public final void died(final Ground board) {
         this.isDead = true;
         board.setNumPlayers(board.getNumPlayers() - 1);
         board.addDeadPlayers(this);
@@ -144,7 +144,9 @@ public abstract class Player implements PlayerObservable, PlayerVisitable {
 
     public final void alive() {
         this.isDead = false;
-        GameMaster.getInstance().getBoard()[this.xPos][this.yPos].setNumPlayers(GameMaster.getInstance().getBoard()[this.xPos][this.yPos].getNumPlayers() + 1);
+        GameMaster.getInstance().getBoard()[this.xPos][this.yPos]
+                .setNumPlayers(GameMaster.getInstance().getBoard()[this.xPos][this.yPos]
+                        .getNumPlayers() + 1);
     }
 
     public final boolean isDead() {
@@ -212,16 +214,16 @@ public abstract class Player implements PlayerObservable, PlayerVisitable {
         this.xp += x;
     }
 
-    public void addStrategyPercent(float strategyPercent) {
-        this.strategyPercent += strategyPercent;
+    public final void addStrategyPercent(final float percent) {
+        this.strategyPercent += percent;
     }
 
-    public int getXp() {
+    public final int getXp() {
         return this.xp;
     }
 
-    public void addAngelPercent(float angelPercent) {
-        this.angelPercent += angelPercent;
+    public final void addAngelPercent(final float percent) {
+        this.angelPercent += percent;
     }
 
     public final int getId() {
@@ -229,27 +231,39 @@ public abstract class Player implements PlayerObservable, PlayerVisitable {
     }
 
     @Override
-    public void notifyLevelUp() throws IOException {
+    public final void notifyLevelUp() throws IOException {
         GreatMagician.getInstance().updateLevelUp(this);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Player player = (Player) o;
-        return id == player.id &&
-                xPos == player.xPos &&
-                yPos == player.yPos &&
-                hp == player.hp &&
-                maxHp == player.maxHp &&
-                xp == player.xp &&
-                level == player.level &&
-                isDead == player.isDead;
+        return id == player.id
+                && xPos == player.xPos
+                && yPos == player.yPos
+                && hp == player.hp
+                && maxHp == player.maxHp
+                && xp == player.xp
+                && level == player.level
+                && isDead == player.isDead;
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(id, xPos, yPos, hp, maxHp, xp, level, isDead);
+    }
+
+    public final float getStrategyPercent() {
+        return strategyPercent;
+    }
+
+    public final float getAngelPercent() {
+        return angelPercent;
     }
 }

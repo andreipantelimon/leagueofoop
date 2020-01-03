@@ -5,6 +5,8 @@ import player.Player;
 
 import java.io.IOException;
 
+//Observer pattern for Great Magician that writes in output.
+
 public class GreatMagician implements GreatMagicianObserver {
     private static GreatMagician instance = null;
 
@@ -19,7 +21,7 @@ public class GreatMagician implements GreatMagicianObserver {
     }
 
     @Override
-    public void updateHelp(Angel angel, Player player) throws IOException {
+    public final void updateHelp(final Angel angel, final Player player) throws IOException {
         String type;
         switch (player.getType()) {
             case "K": type = "Knight";
@@ -37,7 +39,7 @@ public class GreatMagician implements GreatMagicianObserver {
     }
 
     @Override
-    public void updateHit(Angel angel, Player player) throws IOException {
+    public final void updateHit(final Angel angel, final Player player) throws IOException {
         String type;
         switch (player.getType()) {
             case "K": type = "Knight";
@@ -55,7 +57,7 @@ public class GreatMagician implements GreatMagicianObserver {
     }
 
     @Override
-    public void updateKill(Angel angel, Player player) throws IOException {
+    public final void updateKill(final Angel angel, final Player player) throws IOException {
         String type;
         switch (player.getType()) {
             case "K": type = "Knight";
@@ -73,12 +75,13 @@ public class GreatMagician implements GreatMagicianObserver {
     }
 
     @Override
-    public void updateSpawn(Angel angel) throws IOException {
-        GameIOLoader.write("Angel " + angel.getType() + " was spawned at " + angel.getxPos() + " " + angel.getyPos());
+    public final void updateSpawn(final Angel angel) throws IOException {
+        GameIOLoader.write("Angel " + angel.getType() + " was spawned at "
+                + angel.getxPos() + " " + angel.getyPos());
     }
 
     @Override
-    public void updateDead(Player p1, Player p2) throws IOException {
+    public final void updateDead(final Player p1, final Player p2) throws IOException {
         String type1, type2;
         switch (p1.getType()) {
             case "K": type1 = "Knight";
@@ -105,11 +108,12 @@ public class GreatMagician implements GreatMagicianObserver {
             default:
                 throw new IllegalStateException("Unexpected value: " + p2.getType());
         }
-        GameIOLoader.write("Player " + type2 + " " + p2.getId() + " was killed by " + type1 + " " + p1.getId());
+        GameIOLoader.write("Player " + type2 + " " + p2.getId()
+                + " was killed by " + type1 + " " + p1.getId());
     }
 
     @Override
-    public void updateLevelUp(Player player) throws IOException {
+    public final void updateLevelUp(final Player player) throws IOException {
         String type;
         switch (player.getType()) {
             case "K": type = "Knight";
@@ -127,7 +131,7 @@ public class GreatMagician implements GreatMagicianObserver {
     }
 
     @Override
-    public void updateRespawn(Player player) throws IOException {
+    public final void updateRespawn(final Player player) throws IOException {
         String type;
         switch (player.getType()) {
             case "K": type = "Knight";
@@ -141,6 +145,7 @@ public class GreatMagician implements GreatMagicianObserver {
             default:
                 throw new IllegalStateException("Unexpected value: " + player.getType());
         }
-        GameIOLoader.write("Player " + type + " " + player.getId() + " was brought to life by an angel");
+        GameIOLoader.write("Player " + type + " " + player.getId()
+                + " was brought to life by an angel");
     }
 }

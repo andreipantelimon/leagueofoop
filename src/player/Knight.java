@@ -7,8 +7,6 @@ import main.Constants;
 
 import java.io.IOException;
 
-import static java.lang.Integer.max;
-
 public class Knight extends Player {
     Knight(final int id, final int xPos, final int yPos) {
         super(id, xPos, yPos);
@@ -41,7 +39,6 @@ public class Knight extends Player {
      */
     @Override
     final void fight(final Player player, final Ground ground) {
-        int kill = 0;
         boolean playerDied = false;
 
         float executeDmg = Constants.EXECUTE_BASE_DMG
@@ -79,19 +76,19 @@ public class Knight extends Player {
         }
         int executeDmgAfterGround = Math.round(executeDmg
                 + (groundModifier * executeDmg));
-        System.out.println("******* " + player);
 
 
         //Damage for the wizard if it is in battle him.
         this.addDamageToWizard(executeDmgAfterGround);
-        int executeDmgAfterRace = 0;
+        int executeDmgAfterRace;
 
         if (executeModifier != 0) {
             executeDmgAfterRace = Math.round(executeDmgAfterGround
-                    + (executeModifier + strategyPercent + angelPercent) * executeDmgAfterGround);
+                    + (executeModifier + getStrategyPercent()
+                    + getAngelPercent()) * executeDmgAfterGround);
         } else {
             executeDmgAfterRace = Math.round(executeDmgAfterGround
-                    + (executeModifier + strategyPercent) * executeDmgAfterGround);
+                    + (executeModifier + getStrategyPercent()) * executeDmgAfterGround);
         }
 
         // Final execute damage is calculated and applied.
@@ -99,7 +96,6 @@ public class Knight extends Player {
             int executeDmgAll = player.getHp();
             player.setHp(player.getHp() - executeDmgAll);
             player.died(ground);
-            kill = 1;
             playerDied = true;
         } else {
             player.setHp(player.getHp() - executeDmgAfterRace);
@@ -129,10 +125,11 @@ public class Knight extends Player {
         int slamDmgAfterRace;
         if (slamModifier != 0) {
             slamDmgAfterRace = Math.round(slamDmgAfterGround
-                    + (slamModifier + strategyPercent + angelPercent) * slamDmgAfterGround);
+                    + (slamModifier + getStrategyPercent()
+                    + getAngelPercent()) * slamDmgAfterGround);
         } else {
             slamDmgAfterRace = Math.round(slamDmgAfterGround
-                    + (slamModifier + strategyPercent) * slamDmgAfterGround);
+                    + (slamModifier + getStrategyPercent()) * slamDmgAfterGround);
         }
 
         //Slam damage is calculated and applied.
@@ -140,7 +137,6 @@ public class Knight extends Player {
         player.setDoT(0, 0);
         if (player.getHp() <= 0 && !playerDied) {
             player.died(ground);
-            kill = 1;
         }
 
         // Player is stunned.
@@ -158,7 +154,7 @@ public class Knight extends Player {
         }
     }
 
-    public void acceptAngel(AngelVisitor angel) throws IOException {
+    public final void acceptAngel(final AngelVisitor angel) throws IOException {
         angel.visitPlayer(this);
     }
 }

@@ -23,7 +23,7 @@ public final class Main {
         }
 
         //Game is played.
-        GameMaster.getInstance().playTheGame(gameInput, gameIOLoader);
+        GameMaster.getInstance().playTheGame(gameInput);
 
         //Output is written to the file.
         GameIOLoader.write("~~ Results ~~");

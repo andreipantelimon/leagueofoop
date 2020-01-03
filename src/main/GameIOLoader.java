@@ -3,6 +3,7 @@ package main;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,7 +27,8 @@ public final class GameIOLoader {
         int xDim = -1;
         int yDim = -1;
         int playerNumber = -1;
-        int roundNumber = -1;
+        int roundNumber;
+        AbstractMap.SimpleEntry<Integer, ArrayList<String>> roundDataEntry = null;
 
         try {
             FileSystem fs = new FileSystem(mInputPath, mOutputPath);
@@ -51,6 +53,8 @@ public final class GameIOLoader {
                 roundData.add(fs.nextWord());
             }
 
+            roundDataEntry = new AbstractMap.SimpleEntry<>(roundNumber, roundData);
+
             for (int i = 0; i < roundNumber; i++) {
                 int tempCount = fs.nextInt();
                 ArrayList<String> tempArray = new ArrayList<>();
@@ -66,8 +70,9 @@ public final class GameIOLoader {
             e1.printStackTrace();
         }
 
+        assert roundDataEntry != null;
         return new GameInput(xDim, yDim, groundData,
-                playerNumber, playerData, roundNumber, roundData, angelsMap);
+                playerNumber, playerData, roundDataEntry, angelsMap);
     }
 
     public static void write(final String string) throws IOException {

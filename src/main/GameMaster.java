@@ -34,14 +34,13 @@ public final class GameMaster implements GameObservable {
         return instance;
     }
 
-    void playTheGame(final GameInput gameInput, final GameIOLoader gameIOLoader) throws IOException {
+    void playTheGame(final GameInput gameInput) throws IOException {
         AngelFactory angelFactory = new AngelFactory();
         initializeAngelsMap(gameInput);
         initializeBoard(gameInput);
         initializePlayersOnBoard();
         for (int i = 0; i < gameInput.getRoundNumber(); i++) {
-            System.out.println("\n");
-            GameIOLoader.write("~~ Round " + (i+1) + " ~~");
+            GameIOLoader.write("~~ Round " + (i + 1) + " ~~");
 
             String moveData = gameInput.getRoundData().get(i);
             addAngels(gameInput, i, angelFactory);
@@ -57,12 +56,6 @@ public final class GameMaster implements GameObservable {
             movePlayers(moveData);
 
             //The players fight, if one of them is Wizard he attacks second.
-            System.out.println("*** Inceput runda: " + i);
-//            for (Player player : playersList) {
-//                System.out.println(player);
-//            }
-            //for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
-                //for (int yDim = 0; yDim < gameInput.getYDim(); yDim++) {
             for (Player playerFight : playersList) {
                 int xDim = playerFight.getxPos();
                 int yDim = playerFight.getyPos();
@@ -70,7 +63,8 @@ public final class GameMaster implements GameObservable {
                     continue;
                 }
                     boolean fightOk = false;
-                    if (board[xDim][yDim].getNumPlayers() == 2 && !board[xDim][yDim].isFightCheck()) {
+                    if (board[xDim][yDim].getNumPlayers() == 2
+                            && !board[xDim][yDim].isFightCheck()) {
                         Player p1 = board[xDim][yDim].getPlayer1();
                         Player p2 = board[xDim][yDim].getPlayer2();
                         if (!p1.isDead() && !p2.isDead()) {
@@ -128,7 +122,7 @@ public final class GameMaster implements GameObservable {
                         }
                     }
                 }
-            //}
+            //Angels visit the players.
             ArrayList<Angel> angelsListToIterate = angelsMap.get(i);
             for (Angel angel : angelsListToIterate) {
                 angel.notifySpawn();
@@ -171,12 +165,6 @@ public final class GameMaster implements GameObservable {
                 }
             }
 
-            System.out.println("*** Final runda: ");
-            for (Player player : playersList) {
-                if (player.getId() == 35 || player.getId() == 44) {
-                    System.out.println(player);
-                }
-            }
             GameIOLoader.write("");
 
             for (int xDim = 0; xDim < gameInput.getXDim(); xDim++) {
@@ -210,7 +198,7 @@ public final class GameMaster implements GameObservable {
         }
     }
 
-    //Players with new / old coordinates are put on board.
+    //Players are initialized on board.
     private void initializePlayersOnBoard() {
         for (Player player : playersList) {
             Ground tempGround = board[player.getxPos()][player.getyPos()];
@@ -228,6 +216,7 @@ public final class GameMaster implements GameObservable {
         }
     }
 
+    //Players are reinitialized on board after they moved.
     private void reInitializePlayersOnBoard() {
         for (Player player : playersList) {
             if (!player.isDead()) {
@@ -239,7 +228,8 @@ public final class GameMaster implements GameObservable {
                         if (tempGround.getNumPlayers() == 1) {
                             boolean ok = true;
                             if (tempGround.getPlayer1() != null) {
-                                if (!tempGround.getPlayer1().isDead() && !tempGround.getPlayer1().equals(player)) {
+                                if (!tempGround.getPlayer1().isDead()
+                                        && !tempGround.getPlayer1().equals(player)) {
                                     board[player.getxPos()][player.getyPos()].setPlayer2(player);
                                 } else {
                                     if (tempGround.getPlayer2() != null) {
@@ -247,8 +237,10 @@ public final class GameMaster implements GameObservable {
                                             ok = false;
                                         }
                                     }
-                                    if (tempGround.getPlayer1().isDead() && !tempGround.getPlayer1().equals(player) && ok) {
-                                        board[player.getxPos()][player.getyPos()].setPlayer1(player);
+                                    if (tempGround.getPlayer1().isDead()
+                                            && !tempGround.getPlayer1().equals(player) && ok) {
+                                        board[player.getxPos()][player.getyPos()]
+                                                .setPlayer1(player);
                                     }
                                 }
                             } else {
@@ -312,12 +304,13 @@ public final class GameMaster implements GameObservable {
         reInitializePlayersOnBoard();
     }
 
-    void addAngels(GameInput gameInput, int round, AngelFactory angelFactory) {
+    //Angels are added to board and to a HashMap.
+    void addAngels(final GameInput gameInput, final int round, final AngelFactory angelFactory) {
         int id = 0;
         ArrayList tempAngels = (ArrayList) gameInput.getAngelsMap().get(round);
         for (int i = 0; i < tempAngels.size(); i++) {
             String tempAngelString = (String) tempAngels.get(i);
-            String[] angelParts = tempAngelString.split(",", 3);
+            String[] angelParts = tempAngelString.split(",", Constants.SPLIT_LIMIT);
             int tempXPos = Integer.parseInt(angelParts[1]);
             int tempYPos = Integer.parseInt(angelParts[2]);
             Angel tempAngel = angelFactory.createAngel(id, angelParts[0], tempXPos,  tempYPos);
@@ -328,7 +321,7 @@ public final class GameMaster implements GameObservable {
         }
     }
 
-    void initializeAngelsMap(GameInput gameInput) {
+    void initializeAngelsMap(final GameInput gameInput) {
         for (int i = 0; i < gameInput.getRoundNumber(); i++) {
             angelsMap.put(i, new ArrayList<>());
         }
@@ -343,7 +336,7 @@ public final class GameMaster implements GameObservable {
     }
 
     @Override
-    public void notifyDead(Player p1, Player p2) throws IOException {
+    public void notifyDead(final Player p1, final Player p2) throws IOException {
         GreatMagician.getInstance().updateDead(p1, p2);
     }
 

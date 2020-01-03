@@ -3,6 +3,9 @@ package main;
 public final class Constants {
     // Constants class.
     private Constants() { }
+    public static final int SPLIT_LIMIT = 3;
+    public static final float FLOAT_ERROR = 0.0001f;
+
     public static final int BASE_XP = 200;
     public static final int LEVEL_XP = 40;
     public static final int LEVELUP_BASE_XP = 250;
@@ -117,146 +120,198 @@ public final class Constants {
     public static final float GOOD_BOY_ROGUE = 0.4f;
     public static final float GOOD_BOY_WIZARD = 0.3f;
 
-    public static float getStrategyEmpowerMin(String type) {
+    public static final float EMPOWER_K_MIN = 1 / 3f;
+    public static final float EMPOWER_W_MIN = 1 / 4f;
+    public static final float EMPOWER_R_MIN = 1 / 7f;
+    public static float getStrategyEmpowerMin(final String type) {
         switch (type) {
-            case "K": return 1/3f;
+            case "K": return EMPOWER_K_MIN;
             case "P":
             case "W":
-                return 1/4f;
-            case "R": return 1/7f;
+                return EMPOWER_W_MIN;
+            case "R": return EMPOWER_R_MIN;
             default: return 0f;
         }
     }
 
-    public static float getStrategyEmpowerMax(String type) {
+    public static final float EMPOWER_K_MAX = 1 / 2f;
+    public static final float EMPOWER_P_MAX = 1 / 3f;
+    public static final float EMPOWER_R_MAX = 1 / 5f;
+    public static float getStrategyEmpowerMax(final String type) {
         switch (type) {
             case "K":
             case "W":
-                return 1/2f;
-            case "P": return 1/3f;
-            case "R": return 1/5f;
+                return EMPOWER_K_MAX;
+            case "P": return EMPOWER_P_MAX;
+            case "R": return EMPOWER_R_MAX;
             default: return 0f;
         }
     }
 
-    public static float getStrategyEmpowerHp(String type) {
+    public static final float EMPOWER_K_HP = 1 / 5f;
+    public static final float EMPOWER_W_HP = 1 / 10f;
+    public static final float EMPOWER_P_HP = 1 / 4f;
+    public static final float EMPOWER_R_HP = 1 / 7f;
+    public static float getStrategyEmpowerHp(final String type) {
         switch (type) {
-            case "K": return 1/5f;
-            case "W": return 1/10f;
-            case "P": return 1/4f;
-            case "R": return 1/7f;
+            case "K": return EMPOWER_K_HP;
+            case "W": return EMPOWER_W_HP;
+            case "P": return EMPOWER_P_HP;
+            case "R": return EMPOWER_R_HP;
             default: return 0f;
         }
     }
 
-    public static float getStrategyEmpowerPercent(String type) {
+    public static final float EMPOWER_K_PERCENT = 0.5f;
+    public static final float EMPOWER_W_PERCENT = 0.6f;
+    public static final float EMPOWER_P_PERCENT = 0.7f;
+    public static final float EMPOWER_R_PERCENT = 0.4f;
+    public static float getStrategyEmpowerPercent(final String type) {
         switch (type) {
-            case "K": return 0.5f;
-            case "W": return 0.6f;
-            case "P": return 0.7f;
-            case "R": return 0.4f;
+            case "K": return EMPOWER_K_PERCENT;
+            case "W": return EMPOWER_W_PERCENT;
+            case "P": return EMPOWER_P_PERCENT;
+            case "R": return EMPOWER_R_PERCENT;
             default: return 0f;
         }
     }
 
-    public static float getStrategyHealMax(String type) {
+    public static final float HEAL_K_MAX = 1 / 3f;
+    public static final float HEAL_P_MAX = 1 / 4f;
+    public static final float HEAL_R_MAX = 1 / 7f;
+    public static float getStrategyHealMax(final String type) {
         switch (type) {
-            case "K": return 1/3f;
+            case "K": return HEAL_K_MAX;
             case "W":
             case "P":
-                return 1/4f;
-            case "R": return 1/7f;
+                return HEAL_P_MAX;
+            case "R": return HEAL_R_MAX;
             default: return 0f;
         }
     }
 
-    public static float getStrategyHealHp(String type) {
+    public static final float HEAL_K_HP = 1 / 4f;
+    public static final float HEAL_W_HP = 1 / 5f;
+    public static final float HEAL_P_HP = 1 / 3f;
+    public static final float HEAL_R_HP = 1 / 2f;
+    public static float getStrategyHealHp(final String type) {
         switch (type) {
-            case "K": return 1/4f;
-            case "W": return 1/5f;
-            case "P": return 1/3f;
-            case "R": return 1/2f;
+            case "K": return HEAL_K_HP;
+            case "W": return HEAL_W_HP;
+            case "P": return HEAL_P_HP;
+            case "R": return HEAL_R_HP;
             default: return 0f;
         }
     }
 
-    public static float getStrategyHealPercent(String type) {
+    public static final float HEAL_W_PERCENT = 0.2f;
+    public static final float HEAL_P_PERCENT = 0.3f;
+    public static final float HEAL_R_PERCENT = 0.1f;
+    public static float getStrategyHealPercent(final String type) {
         switch (type) {
             case "K":
             case "W":
-                return 0.2f;
-            case "P": return 0.3f;
-            case "R": return 0.1f;
+                return HEAL_W_PERCENT;
+            case "P": return HEAL_P_PERCENT;
+            case "R": return HEAL_R_PERCENT;
             default: return 0f;
         }
     }
 
-    public static int getLifeGiverHp(String type) {
+    public static final int LIFEGIVER_K_HP = 100;
+    public static final int LIFEGIVER_W_HP = 120;
+    public static final int LIFEGIVER_P_HP = 80;
+    public static final int LIFEGIVER_R_HP = 90;
+    public static int getLifeGiverHp(final String type) {
         switch (type) {
-            case "K": return 100;
-            case "W": return 120;
-            case "P": return 80;
-            case "R": return 90;
+            case "K": return LIFEGIVER_K_HP;
+            case "W": return LIFEGIVER_W_HP;
+            case "P": return LIFEGIVER_P_HP;
+            case "R": return LIFEGIVER_R_HP;
             default: return 0;
         }
     }
 
-    public static int getDraculaHp(String type) {
+    public static final int DRACULA_K_HP = 60;
+    public static final int DRACULA_W_HP = 20;
+    public static final int DRACULA_P_HP = 40;
+    public static final int DRACULA_R_HP = 35;
+    public static int getDraculaHp(final String type) {
         switch (type) {
-            case "K": return 60;
-            case "W": return 20;
-            case "P": return 40;
-            case "R": return 35;
+            case "K": return DRACULA_K_HP;
+            case "W": return DRACULA_W_HP;
+            case "P": return DRACULA_P_HP;
+            case "R": return DRACULA_R_HP;
             default: return 0;
         }
     }
 
-    public static int getXpAngelXp(String type) {
+    public static final int XPANGEL_K_XP = 45;
+    public static final int XPANGEL_W_XP = 60;
+    public static final int XPANGEL_P_XP = 50;
+    public static final int XPANGEL_R_XP = 40;
+    public static int getXpAngelXp(final String type) {
         switch (type) {
-            case "K": return 45;
-            case "W": return 60;
-            case "P": return 50;
-            case "R": return 40;
+            case "K": return XPANGEL_K_XP;
+            case "W": return XPANGEL_W_XP;
+            case "P": return XPANGEL_P_XP;
+            case "R": return XPANGEL_R_XP;
             default: return 0;
         }
     }
 
-    public static int getSmallAngelHp(String type) {
+    public static final int SMALLANGEL_K_HP = 10;
+    public static final int SMALLANGEL_W_HP = 25;
+    public static final int SMALLANGEL_P_HP = 15;
+    public static final int SMALLANGEL_R_HP = 20;
+    public static int getSmallAngelHp(final String type) {
         switch (type) {
-            case "K": return 10;
-            case "W": return 25;
-            case "P": return 15;
-            case "R": return 20;
+            case "K": return SMALLANGEL_K_HP;
+            case "W": return SMALLANGEL_W_HP;
+            case "P": return SMALLANGEL_P_HP;
+            case "R": return SMALLANGEL_R_HP;
             default: return 0;
         }
     }
 
-    public static int getGoodBoyHp(String type) {
+    public static final int GOODBOY_K_HP = 20;
+    public static final int GOODBOY_W_HP = 50;
+    public static final int GOODBOY_P_HP = 30;
+    public static final int GOODBOY_R_HP = 40;
+    public static int getGoodBoyHp(final String type) {
         switch (type) {
-            case "K": return 20;
-            case "W": return 50;
-            case "P": return 30;
-            case "R": return 40;
+            case "K": return GOODBOY_K_HP;
+            case "W": return GOODBOY_W_HP;
+            case "P": return GOODBOY_P_HP;
+            case "R": return GOODBOY_R_HP;
             default: return 0;
         }
     }
 
-    public static int getDarkAngelHp(String type) {
+    public static final int DARKANGEL_K_HP = 40;
+    public static final int DARKANGEL_W_HP = 20;
+    public static final int DARKANGEL_P_HP = 30;
+    public static final int DARKANGEL_R_HP = 10;
+    public static int getDarkAngelHp(final String type) {
         switch (type) {
-            case "K": return 40;
-            case "W": return 20;
-            case "P": return 30;
-            case "R": return 10;
+            case "K": return DARKANGEL_K_HP;
+            case "W": return DARKANGEL_W_HP;
+            case "P": return DARKANGEL_P_HP;
+            case "R": return DARKANGEL_R_HP;
             default: return 0;
         }
     }
 
-    public static int getSpawnerHp(String type) {
+    public static final int SPAWNER_K_HP = 200;
+    public static final int SPAWNER_W_HP = 120;
+    public static final int SPAWNER_P_HP = 150;
+    public static final int SPAWNER_R_HP = 180;
+    public static int getSpawnerHp(final String type) {
         switch (type) {
-            case "K": return 200;
-            case "W": return 120;
-            case "P": return 150;
-            case "R": return 180;
+            case "K": return SPAWNER_K_HP;
+            case "W": return SPAWNER_W_HP;
+            case "P": return SPAWNER_P_HP;
+            case "R": return SPAWNER_R_HP;
             default: return 0;
         }
     }

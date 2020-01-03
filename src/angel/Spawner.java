@@ -7,17 +7,20 @@ import java.io.IOException;
 
 public class Spawner extends Angel {
     public Spawner(final int id, final int xPos, final int yPos) {
-        this.id = id;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.type = "Spawner";
+        this.setId(id);
+        this.setxPos(xPos);
+        this.setyPos(yPos);
+        this.setType("Spawner");
     }
 
+    /**
+     * Visit method for Spawner Angel.
+     * @param player
+     * @throws IOException
+     */
     @Override
-    public void visitPlayer(Player player) throws IOException {
+    public void visitPlayer(final Player player) throws IOException {
         String type = player.getType();
-        System.out.println("Player " + type + " visited by spawner");
-
         if (player.isDead()) {
             player.alive();
             player.setHp(Constants.getSpawnerHp(type));
